@@ -9,10 +9,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 import Swal from 'sweetalert2';
-<<<<<<< HEAD
-=======
 import { apiPost, apiGet } from '../apiCommon';
->>>>>>> branch-b
 import { baseURL } from '../base';
 import { config } from '../config';
 import { Dialog, DialogActions, DialogContent, DialogTitle, } from "@mui/material";
@@ -53,24 +50,14 @@ function franchiseDetails() {
     navigate(value);
   };
 
-<<<<<<< HEAD
-    const handleClose = ()=>{
-        setAddFranchiseeForm({ franchiseeName: "", address: "", city: "", state: "", mobileNumber: "", pincode: "", email: "", panno: "" });
-    }
-=======
   const handleClose = () => {
     setAddFranchiseeForm({ franchiseeName: "", address: "", city: "", state: "", mobileNumber: "", pincode: "", email: "", panno: "" });
   }
->>>>>>> branch-b
   //===========================( Populated Franchisee name AND vendor code )============================================
 
   const fetchFranchiseeName = async () => {
     try {
-<<<<<<< HEAD
-      const res = await axios.get(`${baseURL}${config.getAllFranchisees}`);
-=======
       const res = await apiGet(config.getAllFranchisees);
->>>>>>> branch-b
       setfranchiseeName(res.data.franchisees);
     } catch (error) {
       console.error("Error fetching franchisees details", error);
@@ -79,11 +66,7 @@ function franchiseDetails() {
 
   const fetchVendors = async () => {
     try {
-<<<<<<< HEAD
-      const res = await axios.get(`${baseURL}${config.getAllVendors}`);
-=======
       const res = await apiGet(config.getAllVendors);
->>>>>>> branch-b
       setVendorCodes(res.data.vendors);
     } catch (error) {
       console.error("Error fetching vendor codes", error);
@@ -94,11 +77,7 @@ function franchiseDetails() {
   const handleMap = async (mobileNumber) => {
     try {
       // Fetch franchisee details using mobile number
-<<<<<<< HEAD
-      const response = await axios.get(`${baseURL}${config.adminGetFranchiseDetails}${mobileNumber}/`);
-=======
       const response = await apiGet(config.adminGetFranchiseDetails, mobileNumber);
->>>>>>> branch-b
       const franchisee = response.data;
 
       // Set the selected name and mobile number (read-only)
@@ -118,19 +97,10 @@ function franchiseDetails() {
 
 
   const handleMapSave = async () => {
-<<<<<<< HEAD
-    console.groupCollapsed()
-=======
-
->>>>>>> branch-b
     console.log("Selected Franchisee Name:", selectedfranchiseeName);
     console.log("Selected Vendor Code:", selectedVendorCode);
     console.log("Map Mobile Number:", mapMobileNumber);
     console.log("Franchisee List:", franchiseeName); // full list
-<<<<<<< HEAD
-    console.groupEnd()
-=======
->>>>>>> branch-b
 
     // Find the franchiseeUID from name
     const selectedFranchisee = franchiseeName.find(
@@ -139,18 +109,11 @@ function franchiseDetails() {
 
     // Find the vendorUID from code
     const selectedVendors = vendorCodes.filter((v) =>
-<<<<<<< HEAD
-        selectedVendorCode.includes(v.vendorCode)
-      );
-
-    // console.log("Vendor Codes List:", selectedVendor); // full list
-=======
       selectedVendorCode.includes(v.vendorCode)
     );
 
     // console.log("Vendor Codes List:", selectedVendor); // full list
 
->>>>>>> branch-b
     if (!selectedFranchisee || !selectedVendors || !mapMobileNumber) {
       toast.error("Please fill all fields correctly.");
       return;
@@ -164,11 +127,7 @@ function franchiseDetails() {
     };
 
     try {
-<<<<<<< HEAD
-      const res = await axios.post(`${baseURL}${config.franchiseVendorMapping}`, payload);
-=======
       const res = await apiPost(config.franchiseVendorMapping, payload);
->>>>>>> branch-b
       if (res.data.code === 200) {
         toast.success("Mapping saved successfully!");
 
@@ -199,11 +158,7 @@ function franchiseDetails() {
 
   const checkIfMobileExists = async (mobileNumber) => {
     try {
-<<<<<<< HEAD
-      const response = await axios.get(`${baseURL}${config.adminGetFranchiseDetails}${mobileNumber}/`);
-=======
       const response = await apiGet(config.adminGetFranchiseDetails, mobileNumber);
->>>>>>> branch-b
       return response.data ? true : false; // If data exists, return true
     } catch (error) {
       if (error.response && error.response.status === 404) {
@@ -220,11 +175,7 @@ function franchiseDetails() {
 
       const exists = await checkIfMobileExists(mobileNumber);
       if (exists) {
-<<<<<<< HEAD
-        const response = await axios.patch(`${baseURL}${config.updateSpecificFranchise}${mobileNumber}/`, addFranchiseeForm);
-=======
         const response = await apiPost(config.updateSpecificFranchise, addFranchiseeForm);
->>>>>>> branch-b
         if (response.data.code === 200) {
           toast.success("Franchisee updated successfully!");
           fetchFranchisee();
@@ -236,11 +187,7 @@ function franchiseDetails() {
       }
 
 
-<<<<<<< HEAD
-      const response = await axios.post(`${baseURL}${config.addFranchiseDetails}`, addFranchiseeForm);
-=======
       const response = await apiPost(config.addFranchiseDetails, addFranchiseeForm);
->>>>>>> branch-b
       if (response.data.code === 200) {
         toast.success("Franchisee added successfully!");
         fetchFranchisee();// this will refresh the table and rerender the new data
@@ -316,10 +263,7 @@ function franchiseDetails() {
     {
       label: 'Action',
       dataField: 'action',
-<<<<<<< HEAD
-=======
       excludeFromExport: true,
->>>>>>> branch-b
       width: 150,
       formatFunction: (settings) => {
         const mapDiv = document.createElement('span');
@@ -390,11 +334,7 @@ function franchiseDetails() {
     if (!result.isConfirmed) return;
 
     try {
-<<<<<<< HEAD
-      await axios.delete(`${baseURL}${config.deleteFranchiseDetails}${mobileNumber}/`);
-=======
       await apiPost(config.deleteFranchiseDetails, { "mobileNumber": mobileNumber });
->>>>>>> branch-b
       await Swal.fire("Deleted!", "Franchisee has been deleted.", "success");
 
       // Refresh table after deletion
@@ -407,11 +347,7 @@ function franchiseDetails() {
 
   const handleEdit = async (mobileNumber) => {
     try {
-<<<<<<< HEAD
-      const response = await axios.get(`${baseURL}${config.adminGetFranchiseDetails}${mobileNumber}/`);
-=======
       const response = await apiGet(config.adminGetFranchiseDetails, mobileNumber);
->>>>>>> branch-b
       const franchiseeDetails = response.data;
       // console.log("Detail of that Franchisee is =>>", franchiseeDetails)
       // Set form values
@@ -472,11 +408,7 @@ function franchiseDetails() {
 
   const fetchFranchisee = async () => {
     try {
-<<<<<<< HEAD
-      const response = await axios.get(`${baseURL}${config.getAllFranchiseDetails}`);
-=======
       const response = await apiGet(config.getAllFranchiseDetails);
->>>>>>> branch-b
 
       const formatted = response.data.map((item, index) => ({
         sno: index + 1,
@@ -622,11 +554,7 @@ function franchiseDetails() {
             <div className="modal-header">
               <h5 className="modal-title">Add Franchise</h5>
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" >
-<<<<<<< HEAD
-                {/* <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> */}
-=======
                 {/* <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> */}
->>>>>>> branch-b
               </button>
             </div>
             <div className="modal-body">
@@ -710,19 +638,11 @@ function franchiseDetails() {
       >
         <DialogTitle id="alert-dialog-title"
         >
-<<<<<<< HEAD
-          {isAddUserPopup? "Add Franchise":"Edit Franchisee"}
-        </DialogTitle>
-        <IconButton
-          aria-label="close"
-          onClick={() =>{ setIsAddUserPopup(false), handleClose()}}
-=======
           {isAddUserPopup ? "Add Franchise" : "Edit Franchisee"}
         </DialogTitle>
         <IconButton
           aria-label="close"
           onClick={() => { setIsAddUserPopup(false), handleClose() }}
->>>>>>> branch-b
           sx={(theme) => ({
             position: 'absolute',
             right: 8,
@@ -787,11 +707,7 @@ function franchiseDetails() {
 
         </DialogContent>
         <DialogActions>
-<<<<<<< HEAD
-          <button className="btn btn-light-dark" onClick={() =>{ setIsAddUserPopup(false), handleClose()}} >Cancel</button>
-=======
           <button className="btn btn-light-dark" onClick={() => { setIsAddUserPopup(false), handleClose() }} >Cancel</button>
->>>>>>> branch-b
           <button type="button" onClick={handleSave} className="btn btn-primary">Save</button>
         </DialogActions>
       </Dialog>
@@ -852,11 +768,7 @@ function franchiseDetails() {
                           </option>
                         ))}
                       </select> */}
-<<<<<<< HEAD
-                    {/* <MultiSelect
-=======
                       {/* <MultiSelect
->>>>>>> branch-b
                         id="vendorCode"
                         value={selectedVendorCode || []}
                         onChange={(e) => setSelectedVendorCode(e.value)}
@@ -945,20 +857,6 @@ function franchiseDetails() {
                       </option>
                     ))}
                   </select> */}
-<<<<<<< HEAD
-                    <MultiSelect
-                        id="vendorCode"
-                        value={selectedVendorCode || []}
-                        onChange={(e) => setSelectedVendorCode(e.value)}
-                        options={vendorCodes}
-                        optionLabel="vendorCode"
-                        optionValue="vendorCode"
-                        placeholder="Select Vendor Codes"
-                        filter
-                        maxSelectedLabels={3}
-                        className="w-full md:w-20rem"
-                      />
-=======
                   <MultiSelect
                     id="vendorCode"
                     value={selectedVendorCode || []}
@@ -971,7 +869,6 @@ function franchiseDetails() {
                     maxSelectedLabels={3}
                     className="w-full md:w-20rem"
                   />
->>>>>>> branch-b
                 </div>
               </Grid>
             </Grid>
@@ -985,11 +882,7 @@ function franchiseDetails() {
           <Button style={{ marginLeft: "10px" }} size="md" type="button" variant="inherit" onClick={() => setIsMappingPopup(false)}>
             Cancel
           </Button> */}
-<<<<<<< HEAD
-          <button className="btn btn-light-dark" onClick={() => {setIsMappingPopup(false),handleClose()}}>Cancel</button>
-=======
           <button className="btn btn-light-dark" onClick={() => { setIsMappingPopup(false), handleClose() }}>Cancel</button>
->>>>>>> branch-b
           <button type="button" onClick={handleMapSave} className="btn btn-primary">Save</button>
         </DialogActions>
       </Dialog>
