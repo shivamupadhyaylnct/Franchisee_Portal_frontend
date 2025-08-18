@@ -3,10 +3,14 @@ import logo from '../../src/assets/img/logo.jpg';
 import profile from '../../src/assets/img/profile-30.png';
 import usersvg from '../../src/assets/img/usersvg.svg'
 import { Link, useNavigate } from "react-router-dom";
+import { APICore } from '../ApiCore';
+import axios from 'axios';
 
+
+const api = new APICore();
 function Header() {
-    const user = localStorage.getItem("user_details");
-    const mobile = localStorage.getItem("mobile");
+    const user = sessionStorage.getItem("user_details");
+    const mobile = sessionStorage.getItem("mobile");
     const userDetails = JSON.parse(user)
     // console.log("user details is ",userDetails)
     const navigate = useNavigate();
@@ -30,12 +34,12 @@ function Header() {
 
                     <ul className="navbar-item theme-brand flex-row  text-center">
                         <li className="nav-item theme-logo">
-                            <Link to ="#">
+                            <Link to="#">
                                 <img src={logo} className="navbar-logo" alt="logo" />
                             </Link>
                         </li>
                         <li className="nav-item theme-text">
-                            <Link to ="#" className="nav-link"> Franchisee Portal </Link>
+                            <Link to="#" className="nav-link"> Franchisee Portal </Link>
                         </li>
                     </ul>
 
@@ -87,7 +91,7 @@ function Header() {
                                     </div>
                                 </div>
                                 <div className="dropdown-item">
-                                    <Link to ="#" onClick={handleProfileClick} style={{ cursor: "pointer" }}>
+                                    <Link to="#" onClick={handleProfileClick} style={{ cursor: "pointer" }}>
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="24"
@@ -104,20 +108,27 @@ function Header() {
                                         <span>Profile</span>
                                     </Link>
                                 </div>
-                                 <div className="dropdown-item">
-                                    <Link to ="/admin/changePassword" style={{ cursor: "pointer" }}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" 
-                                             width="32" 
-                                             height="32" 
-                                             viewBox="0 0 32 32">
-                                                <path fill="currentColor" d="M21 2a8.998 8.998 0 0 0-8.612 11.612L2 24v6h6l10.388-10.388A9 9 0 1 0 21 2m0 16a7 7 0 0 1-2.032-.302l-1.147-.348l-.847.847l-3.181 3.181L12.414 20L11 21.414l1.379 1.379l-1.586 1.586L9.414 23L8 24.414l1.379 1.379L7.172 28H4v-3.172l9.802-9.802l.848-.847l-.348-1.147A7 7 0 1 1 21 18"/>
-                                                <circle cx="22" cy="10" r="2" fill="currentColor"/>
+                                <div className="dropdown-item">
+                                    <Link to="/admin/changePassword" style={{ cursor: "pointer" }}>
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            width="32"
+                                            height="32"
+                                            viewBox="0 0 32 32">
+                                            <path fill="currentColor" d="M21 2a8.998 8.998 0 0 0-8.612 11.612L2 24v6h6l10.388-10.388A9 9 0 1 0 21 2m0 16a7 7 0 0 1-2.032-.302l-1.147-.348l-.847.847l-3.181 3.181L12.414 20L11 21.414l1.379 1.379l-1.586 1.586L9.414 23L8 24.414l1.379 1.379L7.172 28H4v-3.172l9.802-9.802l.848-.847l-.348-1.147A7 7 0 1 1 21 18" />
+                                            <circle cx="22" cy="10" r="2" fill="currentColor" />
                                         </svg>
                                         <span>Change Password</span>
                                     </Link>
                                 </div>
-                                <div className="dropdown-item">
-                                    <Link to="/" style={{ cursor: "pointer" }}>
+                                <div className="col-auto text-end">
+                                    <button
+                                        className="btn btn-secondary _effect--ripple waves-effect waves-light d-flex align-items-center gap-2 px-3"
+                                        onClick={() => {
+                                            api.setLoggedInUser(null);
+                                            localStorage.removeItem("user_details");
+                                            delete axios.defaults.headers["Authorization"];
+                                            navigate("/");
+                                        }}>
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             width="24" height="24"
                                             viewBox="0 0 24 24"
@@ -131,7 +142,7 @@ function Header() {
                                             <polyline points="16 17 21 12 16 7"></polyline>
                                             <line x1="21" y1="12" x2="9" y2="12"></line></svg>
                                         <span>Log Out</span>
-                                    </Link>
+                                    </button>
                                 </div>
                             </div>
 

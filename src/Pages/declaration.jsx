@@ -8,10 +8,11 @@ import { BeatLoader } from 'react-spinners';
 import { baseURL, base } from '../base';
 import { config } from '../config';
 import { Link } from 'react-router-dom';
+import { apiPost } from '../apiCommon';
 
 function Declaration() {
   const tableRef = useRef();
-  const user = localStorage.getItem("user_details");
+  const user = sessionStorage.getItem("user_details");
   const userDetails = JSON.parse(user)
 
   const [storeCodes, setStoreCodes] = useState([])
@@ -31,41 +32,41 @@ function Declaration() {
 
 
   // Common Dropdown for Franchise Name, Financial year and financial quarter using name attribute
-    const handleChange = (event) => {
-      const { name, value } = event.target; //Destructring
-      console.log(`selected franchisee name is ${selectedFranchiseName}`)
-      
-      if (name === 'selectedFranchiseName') {
-        setSelectedFranchiseName(value);
-      } else if (name === 'selectedFinancialYear') {
-        setSelectedFinancialYear(value);
-      } else if (name === 'selectedFinancialQuarter') {
-        setSelectedFinancialQuarter(value);
-      } else if (name === 'selectedStoreCode') {
-        setSelectedStoreCode(value);
+  const handleChange = (event) => {
+    const { name, value } = event.target; //Destructring
+    console.log(`selected franchisee name is ${selectedFranchiseName}`)
+
+    if (name === 'selectedFranchiseName') {
+      setSelectedFranchiseName(value);
+    } else if (name === 'selectedFinancialYear') {
+      setSelectedFinancialYear(value);
+    } else if (name === 'selectedFinancialQuarter') {
+      setSelectedFinancialQuarter(value);
+    } else if (name === 'selectedStoreCode') {
+      setSelectedStoreCode(value);
+    }
+  };
+
+  useEffect(() => {
+    const fetchVendorFranchisee = async () => {
+      try {
+        const vendorCodes = userDetails.map(u => u.UserName);
+        console.log("vendorCodes =:", userDetails)
+
+        const res = await apiPost(config.getVendorWithFranchisee, { vendorCodes });
+        if (res.data.code === 200) {
+          setVendorCodeWithName(res.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching vendor:", err);
       }
     };
-
-    useEffect(()=>{
-      const fetchVendorFranchisee = async () => {
-     try {
-            const vendorCodes = userDetails.map(u => u.UserName);
-            console.log("vendorCodes =:",userDetails)
-
-            const res = await axios.post(`${baseURL}${config.getVendorWithFranchisee}`,{vendorCodes});
-            if (res.data.code === 200) {
-                setVendorCodeWithName(res.data.data);
-            }
-        } catch (err) {
-          console.error("Error fetching vendor:", err);
-          } 
-      };
-      fetchVendorFranchisee();
-  },[selectedFranchiseName])
+    fetchVendorFranchisee();
+  }, [selectedFranchiseName])
 
 
   async function getStoreCodes() {
-    const response = await axios.post(`${baseURL}${config.getallstoredetails}`, {
+    const response = await apiPost(config.getallstoredetails, {
       storeUID: selectedFranchiseName
     });
     try {
@@ -162,19 +163,19 @@ function Declaration() {
       else {
         setLoading(true);
         const storeCode = selectedStoreCode// "2023-2024" → "2024"
-        const response = await axios.post(`${baseURL}${config.getCmrDetails}`, {
+        const response = await apiPost(config.getCmrDetails, {
           year: selectedFinancialYear,
           quarter: selectedFinancialQuarter,
           storecode: storeCode
         });
 
-          const { code, message, files } = response?.data;
-          if (code === 204 || !files || files.length === 0) {
-            toast.info(message || "No files found for selected store/quarter/year.");
-            setNdcDetails([]);
-            setLoading(false);
-            return;
-          }
+        const { code, message, files } = response?.data;
+        if (code === 204 || !files || files.length === 0) {
+          toast.info(message || "No files found for selected store/quarter/year.");
+          setNdcDetails([]);
+          setLoading(false);
+          return;
+        }
 
         if (response.data && response.data.files) {
           // const baseURL = "http://192.168.2.173:8000/media/cmr/";
@@ -191,9 +192,9 @@ function Declaration() {
           if (tableRef.current) {
             tableRef.current.dataSource = formattedData;
           }
-  
+
         } else {
-          toast.warn( "No files found for selected store/quarter/year.");
+          toast.warn("No files found for selected store/quarter/year.");
           setNdcDetails([]); // clear the table if nothing found
           setLoading(false);
         }
@@ -215,16 +216,16 @@ function Declaration() {
               <div className="statbox widget box box-shadow">
                 <div className="widget-header">
                   <div className="d-flex align-items-center justify-content-between">
-                        <h4 className="p-3" >Declarations</h4>
-                        <div className="d-flex gap-2 m-3">
-                            <Link to="/user/dashboard">
-                                <button className="btn btn-primary">
-                                    <i className="fa fa-arrow-left me-2"></i> Back
-                                </button>
-                            </Link>
-                        </div>
+                    <h4 className="p-3" >Declarations</h4>
+                    <div className="d-flex gap-2 m-3">
+                      <Link to="/user/dashboard">
+                        <button className="btn btn-primary">
+                          <i className="fa fa-arrow-left me-2"></i> Back
+                        </button>
+                      </Link>
                     </div>
-                    </div>
+                  </div>
+                </div>
 
                 {/* ==================================== */}
                 <div className="widget-content widget-content-area pt-0">
@@ -275,18 +276,18 @@ function Declaration() {
                                 <div className="form-group">
                                   <label htmlFor="fullName">Vendor Code  </label>
 
-                                  <select name="selectedFranchiseName" 
-                                          id="country" 
-                                          className="form-select" 
-                                          value={selectedFranchiseName}
-                                          onChange={handleChange}>
-                                            
-                                     <option value="" disabled> Select Vendor Code </option>
-                                        {vendorCodeWithName.map((option) => (
-                                            <option key={option.vendorCode} value={option.vendorCode}>
-                                                {option.vendorCode}  {option.vendorName ? ` - ${option.vendorName}` : ""}
-                                            </option>
-                                        ))}
+                                  <select name="selectedFranchiseName"
+                                    id="country"
+                                    className="form-select"
+                                    value={selectedFranchiseName}
+                                    onChange={handleChange}>
+
+                                    <option value="" disabled> Select Vendor Code </option>
+                                    {vendorCodeWithName.map((option) => (
+                                      <option key={option.vendorCode} value={option.vendorCode}>
+                                        {option.vendorCode}  {option.vendorName ? ` - ${option.vendorName}` : ""}
+                                      </option>
+                                    ))}
                                   </select>
                                 </div>
                               </div>

@@ -1,11 +1,19 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
+<<<<<<< HEAD
+=======
+import { apiPost } from '../apiCommon';
+>>>>>>> branch-b
 import { baseURL } from '../base';
 import { config } from '../config';
 
 function adminProfile() {
+<<<<<<< HEAD
     const user = localStorage.getItem("user_details");
+=======
+    const user = sessionStorage.getItem("user_details");
+>>>>>>> branch-b
     const userDetails = JSON.parse(user)
     const vendorCodes = userDetails.map(u => u.UserName);
 
@@ -31,7 +39,11 @@ function adminProfile() {
             if (!selectedVendor) return;
 
             try {
+<<<<<<< HEAD
                 const response = await axios.post(`${baseURL}${config.getFranchiseDetails}`, {
+=======
+                const response = await apiPost(config.getFranchiseDetails, {
+>>>>>>> branch-b
                     selectedVendorCode: selectedVendor
                 });
 

@@ -2,6 +2,10 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+<<<<<<< HEAD
+=======
+import { apiPost, apiGet } from "../apiCommon";
+>>>>>>> branch-b
 import { baseURL } from "../base";
 import { config } from "../config";
 import {
@@ -14,12 +18,24 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Grid2 as Grid } from "@mui/material";
 import { Switch, FormControlLabel } from "@mui/material";
+<<<<<<< HEAD
 
 function alert() {
   const navigate = useNavigate();
   const [isAgreementExpirationPopup, setIsAgreementExpirationPopup] = useState(false);
   const [isStockBlockPopup, setIsStockBlockPopup] = useState(false);
   const [isInvoiceSubmissionPopup, setIsInvoiceSubmissionPopup] = useState(false);
+=======
+import Swal from 'sweetalert2';
+
+function alert() {
+  const navigate = useNavigate();
+  const [isAgreementExpirationPopup, setIsAgreementExpirationPopup] =
+    useState(false);
+  const [isStockBlockPopup, setIsStockBlockPopup] = useState(false);
+  const [isInvoiceSubmissionPopup, setIsInvoiceSubmissionPopup] =
+    useState(false);
+>>>>>>> branch-b
   const [isGenericFormPopup, setIsGenericFormPopup] = useState(false);
 
   const [agreementExpForm, setAgreementExpForm] = useState({
@@ -43,6 +59,7 @@ function alert() {
   });
 
   const handleAgreementChange = (e) => {
+<<<<<<< HEAD
     const { name, value } = e.target;
 
     // remainingDays
@@ -65,6 +82,14 @@ function alert() {
 
 
 
+=======
+    setAgreementExpForm({
+      ...agreementExpForm,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+>>>>>>> branch-b
   const handleStockBlockChange = (e) => {
     setStockBlockForm({
       ...stockBlockForm,
@@ -108,8 +133,12 @@ function alert() {
 
     // Run save with updated value
     try {
+<<<<<<< HEAD
       const res = await axios.post(
         `${baseURL}${config.createAlert}`,
+=======
+      const res = await apiPost(config.createAlert,
+>>>>>>> branch-b
         updatedForm
       );
       if (res.data.code === 201) {
@@ -122,6 +151,59 @@ function alert() {
 
   const handleSave = async () => {
     try {
+<<<<<<< HEAD
+=======
+
+      if (isAgreementExpirationPopup && (!agreementExpForm.alertMessage || !agreementExpForm.remainingDays)) {
+        Swal.fire({
+
+          icon: "warning",
+          text: "Ensure Alert Message & Remaining Days are filled to proceed further.",
+          confirmButtonText: "OK",
+        });
+        setTimeout(() => document.querySelector('.swal2-container')?.setAttribute('style', 'z-index: 3000 !important'), 0);
+        return;
+      }
+      else if (isStockBlockPopup && !stockBlockForm.alertMessage) {
+        Swal.fire({
+
+          icon: "warning",
+          text: "Ensure Alert Message to be filled to proceed further.",
+          confirmButtonText: "OK",
+          customClass: {
+            popup: 'my-swal-container'
+          }
+        });
+        setTimeout(() => document.querySelector('.swal2-container')?.setAttribute('style', 'z-index: 3000 !important'), 0);
+        return;
+      }
+      else if (isInvoiceSubmissionPopup && !invoiceForm.alertMessage && !invoiceForm.expiryDate) {
+        Swal.fire({
+
+          icon: "warning",
+          text: "Ensure Alert Message & Expiry Date are filled to proceed further.",
+          confirmButtonText: "OK",
+          customClass: {
+            popup: 'my-swal-container'
+          }
+        });
+        setTimeout(() => document.querySelector('.swal2-container')?.setAttribute('style', 'z-index: 3000 !important'), 0);
+        return;
+      }
+      else if (isGenericFormPopup && !genericForm.alertMessage) {
+        Swal.fire({
+
+          icon: "warning",
+          text: "Ensure Alert Message to be filled to proceed further.",
+          confirmButtonText: "OK",
+          customClass: {
+            popup: 'my-swal-container'
+          }
+        });
+        setTimeout(() => document.querySelector('.swal2-container')?.setAttribute('style', 'z-index: 3000 !important'), 0);
+        return;
+      }
+>>>>>>> branch-b
       // console.log("from data is : ", agreementExpForm)
       // console.log("Stock Block : ", stockBlockForm)
       // console.log("invoice form : ", invoiceForm)
@@ -130,9 +212,19 @@ function alert() {
       // Check and send Agreement Expiration Notification if it has data
       if (agreementExpForm.alertMessage && agreementExpForm.remainingDays) {
         // console.log("Agreement is running")
+<<<<<<< HEAD
         const res1 = await axios.post( `${baseURL}${config.createAlert}`, agreementExpForm );
         if (res1.data.code === 201) {
           toast.success("Agreement Expiration Alert Added");
+=======
+        const res1 = await apiPost(config.createAlert,
+          agreementExpForm
+        );
+
+        if (res1.data.code === 201) {
+          toast.success("Agreement Expiration Alert Added");
+          setIsAgreementExpirationPopup(false)
+>>>>>>> branch-b
           setAgreementExpForm({
             alertMessage: "",
             remainingDays: "",
@@ -144,22 +236,46 @@ function alert() {
       // Check and send Stock Block Alert if it has data
       if (stockBlockForm.alertMessage) {
         // console.log("Stock Block is running")
+<<<<<<< HEAD
         const res2 = await axios.post( `${baseURL}${config.createAlert}`, stockBlockForm );
         if (res2.data.code === 201) {
           toast.success("Stock Block Alert Added");
           setStockBlockForm({ 
             alertMessage: "", 
             alertName: "Stock Block and Payment Hold Alerts", });
+=======
+        const res2 = await apiPost(config.createAlert,
+          stockBlockForm
+        );
+
+        if (res2.data.code === 201) {
+          toast.success("Stock Block Alert Added");
+          setIsStockBlockPopup(false)
+          setStockBlockForm({
+            alertMessage: "",
+            alertName: "Stock Block and Payment Hold Alerts",
+          });
+>>>>>>> branch-b
         }
       }
 
       // Check and send Invoice Reminder if it has data
       if (invoiceForm.alertMessage && invoiceForm.expiryDate) {
         // console.log("Invoice is running")
+<<<<<<< HEAD
         const res3 = await axios.post( `${baseURL}${config.createAlert}`, invoiceForm );
 
         if (res3.data.code === 201) {
           toast.success("Invoice Reminder Alert Added");
+=======
+        const res3 = await apiPost(config.createAlert,
+          invoiceForm
+        );
+
+        if (res3.data.code === 201) {
+          toast.success("Invoice Reminder Alert Added");
+          setIsInvoiceSubmissionPopup(false)
+>>>>>>> branch-b
           setInvoiceForm({
             alertMessage: "",
             expiryDate: "",
@@ -170,6 +286,7 @@ function alert() {
 
       // Check and send Generic Message if it has data
       if (genericForm.alertMessage) {
+<<<<<<< HEAD
         const res4 = await axios.post( `${baseURL}${config.createAlert}`, genericForm );
         if (res4.data.code === 201) {
           toast.success("Generic Message Added");
@@ -179,6 +296,18 @@ function alert() {
         }
       }
 
+=======
+        const res4 = await apiPost(config.createAlert,
+          genericForm
+        );
+
+        if (res4.data.code === 201) {
+          toast.success("Generic Message Added");
+          setIsGenericFormPopup(false)
+          // setGenericForm({ alertMessage: "", alertName: "Generic Message Alert" });
+        }
+      }
+>>>>>>> branch-b
     } catch (error) {
       console.error("Error saving user:", error);
       if (error.response) {
@@ -204,6 +333,7 @@ function alert() {
   }, [isGenericFormPopup]);
 
   const fetchGenericAlert = async () => {
+<<<<<<< HEAD
       try {
           const response = await axios.get(`${baseURL}${config.getGenericAlert}`);
           if (response.data.code === 200) {
@@ -216,6 +346,20 @@ function alert() {
       } catch (error) {
           console.error("Failed to load generic alert:", error);
       }
+=======
+    try {
+      const response = await apiGet(config.getGenericAlert);
+      if (response.data.code === 200) {
+        setGenericForm({
+          alertName: response.data.data.alertName,
+          alertMessage: response.data.data.alertMessage,
+          isVisible: response.data.data.isVisible,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to load generic alert:", error);
+    }
+>>>>>>> branch-b
   };
 
   return (
@@ -382,7 +526,11 @@ function alert() {
                     <textarea
                       id="textarea"
                       className="form-control textarea"
+<<<<<<< HEAD
                       maxlength="400" // total 500
+=======
+                      maxLength="400" // total 500
+>>>>>>> branch-b
                       rows="4"
                       value={agreementExpForm.alertMessage}
                       name="alertMessage"
@@ -411,6 +559,7 @@ function alert() {
           <DialogActions>
             <button
               className="btn btn-light-dark"
+<<<<<<< HEAD
               onClick={() => {setIsAgreementExpirationPopup(false);
                             setAgreementExpForm({
                                   alertMessage: "",
@@ -418,6 +567,10 @@ function alert() {
                                   alertName: "Agreement Expiration Notification",
                                 })
                               }} >
+=======
+              onClick={() => setIsAgreementExpirationPopup(false)}
+            >
+>>>>>>> branch-b
               Cancel
             </button>
             <button
@@ -452,7 +605,11 @@ function alert() {
                   data-bs-dismiss="modal"
                   aria-label="Close"
                 >
+<<<<<<< HEAD
                   {/* <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> */}
+=======
+                  {/* <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> */}
+>>>>>>> branch-b
                 </button>
               </div>
               <div className="modal-body">
@@ -461,7 +618,11 @@ function alert() {
                     <textarea
                       id="textarea"
                       className="form-control textarea"
+<<<<<<< HEAD
                       maxlength="400" // total 500
+=======
+                      maxLength="400" // total 500
+>>>>>>> branch-b
                       rows="4"
                       value={stockBlockForm.alertMessage}
                       name="alertMessage"
@@ -479,9 +640,13 @@ function alert() {
                 >
                   Save
                 </button>
+<<<<<<< HEAD
                 <button className="btn btn-light-dark" 
                        data-bs-dismiss="modal"
                        >
+=======
+                <button className="btn btn-light-dark" data-bs-dismiss="modal">
+>>>>>>> branch-b
                   Cancel
                 </button>
                 {/* <!-- <button type="button" className="btn btn-primary">Save</button> --> */}
@@ -500,6 +665,7 @@ function alert() {
             },
           }}
         >
+<<<<<<< HEAD
           <DialogTitle id="alert-dialog-title"> Stock Block and Payment Hold Alerts </DialogTitle>
           <IconButton
             aria-label="close"
@@ -511,6 +677,28 @@ function alert() {
 
           <DialogContent
             sx={{ width: { xs: "60vw", sm: "60vw", md: "45rem" }, minHeight: "15rem", }}
+=======
+          <DialogTitle id="alert-dialog-title">
+            Stock Block and Payment Hold Alerts
+          </DialogTitle>
+          <IconButton
+            aria-label="close"
+            onClick={() => setIsStockBlockPopup(false)}
+            sx={(theme) => ({
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: theme.palette.grey[500],
+            })}
+          >
+            <CloseIcon />
+          </IconButton>
+          <DialogContent
+            sx={{
+              width: { xs: "60vw", sm: "60vw", md: "45rem" },
+              minHeight: "15rem",
+            }}
+>>>>>>> branch-b
           >
             <>
               <Grid container spacing={2} justify="center">
@@ -518,7 +706,11 @@ function alert() {
                   <textarea
                     id="textarea"
                     className="form-control textarea"
+<<<<<<< HEAD
                     maxlength="400" // total 500
+=======
+                    maxLength="400" // total 500
+>>>>>>> branch-b
                     rows="4"
                     value={stockBlockForm.alertMessage}
                     name="alertMessage"
@@ -532,12 +724,16 @@ function alert() {
           <DialogActions>
             <button
               className="btn btn-light-dark"
+<<<<<<< HEAD
               onClick={() => {setIsStockBlockPopup(false);
                 setStockBlockForm({
                   alertMessage: "",
                   alertName: "Stock Block and Payment Hold Alerts",
                 })
               }}
+=======
+              onClick={() => setIsStockBlockPopup(false)}
+>>>>>>> branch-b
             >
               Cancel
             </button>
@@ -553,11 +749,28 @@ function alert() {
 
         {/* invoicesubmission */}
 
+<<<<<<< HEAD
         <div id="invoicesubmission" className="modal animated zoomInUp custo-zoomInUp" role="dialog" >
           <div className="modal-dialog">
             <div className="modal-content" style={{ backgroundColor: "white", color: "black" }} >
               <div className="modal-header">
                 <h5 className="modal-title"> Invoice Submission Reminder (Advance release) </h5>
+=======
+        <div
+          id="invoicesubmission"
+          className="modal animated zoomInUp custo-zoomInUp"
+          role="dialog"
+        >
+          <div className="modal-dialog">
+            <div
+              className="modal-content"
+              style={{ backgroundColor: "white", color: "black" }}
+            >
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  Invoice Submission Reminder (Advance release)
+                </h5>
+>>>>>>> branch-b
                 <button
                   type="button"
                   className="btn-close"
@@ -574,7 +787,11 @@ function alert() {
                         <textarea
                           id="textarea"
                           className="form-control textarea"
+<<<<<<< HEAD
                           maxlength="400" // total 500
+=======
+                          maxLength="400" // total 500
+>>>>>>> branch-b
                           rows="4"
                           value={invoiceForm.alertMessage}
                           name="alertMessage"
@@ -655,7 +872,11 @@ function alert() {
                     <textarea
                       id="textarea"
                       className="form-control textarea"
+<<<<<<< HEAD
                       maxlength="400" // total 500
+=======
+                      maxLength="400" // total 500
+>>>>>>> branch-b
                       rows="4"
                       value={invoiceForm.alertMessage}
                       name="alertMessage"
@@ -682,6 +903,7 @@ function alert() {
             </>
           </DialogContent>
           <DialogActions>
+<<<<<<< HEAD
             <button className="btn btn-light-dark"
               onClick={() => {setIsInvoiceSubmissionPopup(false);
                  setInvoiceForm({
@@ -693,6 +915,19 @@ function alert() {
               Cancel
             </button>
             <button type="button" onClick={handleSave} className="btn btn-primary" >
+=======
+            <button
+              className="btn btn-light-dark"
+              onClick={() => setIsInvoiceSubmissionPopup(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              className="btn btn-primary"
+            >
+>>>>>>> branch-b
               Save
             </button>
           </DialogActions>
@@ -718,7 +953,11 @@ function alert() {
                                                 <textarea
                                                     id="textarea"
                                                     className="form-control textarea"
+<<<<<<< HEAD
                                                     maxlength="400" // total 500
+=======
+                                                    maxLength="400" // total 500
+>>>>>>> branch-b
                                                     rows="4"
                                                     value={genericForm.alertMessage}
                                                     name="alertMessage"
@@ -738,6 +977,7 @@ function alert() {
                     </div>
                 </div> */}
 
+<<<<<<< HEAD
                 <Dialog
                 open={isGenericFormPopup}
                 aria-labelledby="alert-dialog-title"
@@ -791,6 +1031,61 @@ function alert() {
                     />
                 </DialogActions>
                 </Dialog>
+=======
+        <Dialog
+          open={isGenericFormPopup}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          sx={{ ".MuiDialog-paper": { maxWidth: "55rem !important" } }}
+        >
+          <DialogTitle id="alert-dialog-title"> {" "} Generic Message Alert{" "} </DialogTitle>
+          <IconButton
+            aria-label="close"
+            onClick={() => setIsGenericFormPopup(false)}
+            sx={(theme) => ({ position: "absolute", right: 8, top: 8, color: theme.palette.grey[500], })}
+          >
+            <CloseIcon />
+          </IconButton>
+
+          <DialogContent
+            sx={{ width: { xs: "60vw", sm: "60vw", md: "45rem" }, minHeight: "10rem", }}
+          >
+            <>
+              <Grid container spacing={2} justify="center">
+                <Grid size={{ lg: 12, md: 12, xs: 12 }}>
+                  {/* <Grid item xs={12} md={12} lg={12}> */}
+                  <div className="form-group">
+                    <textarea
+                      id="textarea"
+                      className="form-control textarea"
+                      maxLength="400" // total 500
+                      rows="4"
+                      value={genericForm.alertMessage}
+                      name="alertMessage"
+                      onChange={handleGenericAlertChange}
+                      placeholder="Alert to display on Dashboard"
+                    ></textarea>
+                  </div>
+                </Grid>
+              </Grid>
+            </>
+          </DialogContent>
+          <DialogActions>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={genericForm.isVisible}
+                  onChange={handleToggle}
+                  name="isVisible"
+                  color="primary"
+                  disabled={!genericForm.alertMessage} // disable toggle if someone type
+                />
+              }
+              label="Show on Dashboard"
+            />
+          </DialogActions>
+        </Dialog>
+>>>>>>> branch-b
       </div>
       {/* <!--  END CONTENT AREA  --> */}
     </>

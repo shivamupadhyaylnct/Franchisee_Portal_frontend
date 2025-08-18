@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { baseURL } from "../base";
 import { config } from "../config";
 import { Link } from "react-router-dom";
+import { apiPost } from "../apiCommon";
 
 function KnowledgeCenter() {
   const navigate = useNavigate();
@@ -22,7 +23,10 @@ function KnowledgeCenter() {
         return;
       }
       try {
-        const response = await axios.get( `${baseURL}admin/getFileSearchSuggestions/?query=${searchTerm}` );
+        const response = await apiGet(
+          'admin/getFileSearchSuggestions/', null,
+          { query: searchTerm }
+        );
 
         if (response.data.code === 200) {
           setSuggestion(response.data.data); // flat string list
@@ -69,17 +73,17 @@ function KnowledgeCenter() {
     }
 
     try {
-      //  const response = await axios.post( "http://localhost:8000/api/admin/searchFilesByTerms/", selectedSuggetion );
-       const response = await axios.post( `${baseURL}${config.searchFilesByTerms}`, selectedSuggetion );
+      //  const response = await apiPost(config.searchFilesByTerms, selectedSuggetion );
+      const response = await apiPost(config.searchFilesByTerms, selectedSuggetion);
 
       if (response.data.code === 200) {
         const rowsWithSno = response.data.data.map((item, index) => ({
           sno: index + 1,
           ...item,
         }));
-        console.log("RESPONSE DATA : ",rowsWithSno)
-      
-          // Navigate and pass data to search result page
+        console.log("RESPONSE DATA : ", rowsWithSno)
+
+        // Navigate and pass data to search result page
         navigate("/user/knowledgecenter/userSearchResult", { state: { resultData: rowsWithSno }, });
         setSelectedSuggetion([]);
         setSelectedTermSet(new Set());
@@ -127,9 +131,9 @@ function KnowledgeCenter() {
                                         {/* Container for pills and input */}
                                         <div className="input-with-pills">
                                           {selectedSuggetion.map((Term) => (
-                                            <span key={Term} 
-                                                  className="user-pill" 
-                                                  onClick={() => handndleRemoveSerchTerm(Term) } >
+                                            <span key={Term}
+                                              className="user-pill"
+                                              onClick={() => handndleRemoveSerchTerm(Term)} >
                                               <span>{Term} &times;</span>
                                             </span>
                                           ))}
@@ -203,9 +207,9 @@ function KnowledgeCenter() {
                                   viewBox="0 0 24 24"
                                   fill="none"
                                   stroke="currentColor"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   className="feather feather-airplay"
                                 >
                                   <path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"></path>
@@ -230,9 +234,9 @@ function KnowledgeCenter() {
                                   viewBox="0 0 24 24"
                                   fill="none"
                                   stroke="currentColor"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   className="feather feather-user"
                                 >
                                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -257,9 +261,9 @@ function KnowledgeCenter() {
                                   viewBox="0 0 24 24"
                                   fill="none"
                                   stroke="currentColor"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   className="feather feather-package"
                                 >
                                   <line
@@ -298,9 +302,9 @@ function KnowledgeCenter() {
                                   viewBox="0 0 24 24"
                                   fill="none"
                                   stroke="currentColor"
-                                  stroke-width="2"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
                                   className="feather feather-dollar-sign"
                                 >
                                   <line x1="12" y1="1" x2="12" y2="23"></line>

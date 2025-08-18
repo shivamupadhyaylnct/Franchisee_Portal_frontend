@@ -6,6 +6,7 @@ import { baseURL } from "../../base";
 import { config } from "../../config";
 import { Link } from "react-router-dom";
 import Table from "smart-webcomponents-react/table";
+import { apiGet } from "../../apiCommon";
 
 function userGeneral() {
   const [generalData, setGeneralData] = useState([]);
@@ -89,7 +90,7 @@ function userGeneral() {
 
   const fetchTabledata = async () => {
     try {
-      const response = await axios.get( `${baseURL}${config.getKnowledgeCenterGeneralFiles}` );
+      const response = await apiGet(config.getKnowledgeCenterGeneralFiles);
       const result = await response.data;
 
       if (result.code === 200 && result.data) {

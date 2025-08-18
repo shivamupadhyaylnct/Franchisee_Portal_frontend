@@ -7,118 +7,26 @@ import style7 from '../../src/assets/img/grid-blog-style-7.jpg';
 import style8 from '../../src/assets/img/grid-blog-style-8.jpg';
 import { Link } from "react-router-dom";
 import axios from 'axios';
+import { apiPost } from '../apiCommon';
 import { baseURL } from '../base';
 import { config } from '../config';
 
 function Dashboard() {
     const [alerts, setAlerts] = useState([]);
 
-    //===================== ( Alert Message )==================================
-
-    // useEffect(() => {
-    //     const fetchAlerts = async () => {
-    //         try {
-    //             const response = await axios.post(`${baseURL}${config.getallalerts}`, {
-    //                 alertNames: [
-    //                     "Agreement Expiration Notification",
-    //                     "Stock Block and Payment Hold Alerts",
-    //                     "Invoice Submission Reminder",
-    //                     "Generic Message Alert"
-    //                 ]
-    //             });
-
-    //             if (response.data.code === 200 && response.data.status === 'Success') {
-    //                 const validAlerts = response.data.data.filter(alert => alert.isExpire === 1);
-    //                 setAlerts(validAlerts);
-
-    //   // fetching one time Welcome StockBlock Alert
-
-    //                 const stockBlockAlert = validAlerts.find(
-    //                     (alert) => alert.alertName === "Stock Block and Payment Hold Alerts"
-    //                 );
-
-    //                 if (stockBlockAlert && !sessionStorage.getItem("loginAlertShown")) {
-    //                     Swal.fire({
-    //                     title: "Welcome!",
-    //                     text: stockBlockAlert.alertMessage,
-    //                     icon: "warning",
-    //                     confirmButtonText: "OK"
-    //                     });
-
-    //                     sessionStorage.setItem("loginAlertShown", "true");
-    //                 }
-    //             }
-    //         } catch (error) {
-    //             console.error('Failed to fetch alerts:', error);
-    //         }
-    //     };
-    //     fetchAlerts();
-    // }, []);
-
-    // useEffect(() => {
-    // const fetchAlerts = async () => {
-    //     try {
-    //         const response = await axios.post(`${baseURL}${config.getallalerts}`, {
-    //             alertNames: [
-    //                 "Agreement Expiration Notification",
-    //                 "Stock Block and Payment Hold Alerts",
-    //                 "Invoice Submission Reminder",
-    //                 "Generic Message Alert"
-    //             ]
-    //         });
-    //          console.log("API Response:", response.data); // Log response
-    //         if (response.data.code === 200 && response.data.status === 'Success') {
-    //             let validAlerts = response.data.data.filter(alert => alert.isExpire === 1);
-
-    //             // Handle Generic Message Alert
-    //             const genericAlerts = validAlerts.filter(a => a.alertName === "Generic Message Alert");
-
-    //             if (genericAlerts.length > 0) {
-    //                 const latestGeneric = genericAlerts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-    //                 validAlerts = validAlerts.filter(a => a.alertName !== "Generic Message Alert");
-    //                 if (latestGeneric.isVisible === 1) {
-    //                     validAlerts.push(latestGeneric);
-    //                 }
-    //             }
-
-    //             setAlerts(validAlerts);
-
-    //             // === Welcome StockBlock Alert ===
-    //             const stockBlockAlert = validAlerts.find(
-    //                 (alert) => alert.alertName === "Stock Block and Payment Hold Alerts"
-    //             );
-
-    //             if (stockBlockAlert && !sessionStorage.getItem("loginAlertShown")) {
-    //                 Swal.fire({
-    //                     title: "Welcome!",
-    //                     text: stockBlockAlert.alertMessage,
-    //                     icon: "warning",
-    //                     confirmButtonText: "OK"
-    //                 });
-
-    //                 sessionStorage.setItem("loginAlertShown", "true");
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error('Failed to fetch alerts:', error);
-    //     }
-    // };
-
-    // fetchAlerts();
-    // }, []);
-
     useEffect(() => {
     const fetchAlerts = async () => {
         try {
-            const response = await axios.post(`${baseURL}${config.getallalerts}`, {
-                alertNames: [
-                    "Agreement Expiration Notification",
-                    "Stock Block and Payment Hold Alerts",
-                    "Invoice Submission Reminder",
-                    "Generic Message Alert"
-                ]
-            });
+            const response = await apiPost(config.getallalerts, {
+                    alertNames: [
+                        "Agreement Expiration Notification",
+                        "Stock Block and Payment Hold Alerts",
+                        "Invoice Submission Reminder",
+                        "Generic Message Alert"
+                    ]
+                });
             console.log("API Response:", response.data);
+
             if (response.data.code === 200 && response.data.status === 'Success') {
                 let validAlerts = response.data.data.filter(alert => alert.isExpire === 1);
                 console.log("Valid Alerts:", validAlerts);
@@ -134,18 +42,21 @@ function Dashboard() {
                 }
                 console.log("Final Alerts:", validAlerts);
                 setAlerts([...validAlerts]); // Ensure new array for re-render
-                const stockBlockAlert = validAlerts.find(
-                    (alert) => alert.alertName === "Stock Block and Payment Hold Alerts"
-                );
-                if (stockBlockAlert && !sessionStorage.getItem("loginAlertShown")) {
-                    Swal.fire({
-                        title: "Welcome!",
-                        text: stockBlockAlert.alertMessage,
-                        icon: "warning",
-                        confirmButtonText: "OK"
-                    });
-                    sessionStorage.setItem("loginAlertShown", "true");
-                }
+
+                // fetching one time Welcome StockBlock Alert
+                    const stockBlockAlert = validAlerts.find(
+                        (alert) => alert.alertName === "Stock Block and Payment Hold Alerts"
+                    );
+                    if (stockBlockAlert && !sessionStorage.getItem("loginAlertShown")) {
+                        Swal.fire({
+                            title: "Welcome!",
+                            text: stockBlockAlert.alertMessage,
+                            icon: "warning",
+                            confirmButtonText: "OK"
+                        });
+
+                        sessionStorage.setItem("loginAlertShown", "true");
+                    }
             }
         } catch (error) {
             console.error('Failed to fetch alerts:', error);
@@ -260,7 +171,6 @@ function Dashboard() {
                                             </div>
                                         </Link>
                                     </div>
-                                   
                                     <div className="col-lg-3 mb-3">
                                         <Link to="/user/statements/commission" className="card">
                                             <img src={style1} className="card-img-top" alt="..." />

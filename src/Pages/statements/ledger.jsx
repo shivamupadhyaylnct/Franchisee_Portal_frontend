@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { BeatLoader } from 'react-spinners';
 import { baseURL } from "../../base";
 import { config } from "../../config";
+import { apiPost } from "../../apiCommon";
 
 const CustomFlatpickr = ({ onChange, minDate, maxDate }) => {
   const inputRef = useRef();
@@ -41,7 +42,7 @@ function formatDateTableDisplay(value) {
 
 function Ledger() {
   const tableRef = useRef();
-  const user = localStorage.getItem("user_details");
+  const user = sessionStorage.getItem("user_details");
   const userDetails = JSON.parse(user)
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState(null);
@@ -57,22 +58,22 @@ function Ledger() {
   const [selectedFranchiseName, setSelectedFranchiseName] = useState("");
 
 
-      useEffect(()=>{
-        const fetchVendorFranchisee = async () => {
-        try {
-            const vendorCodes = userDetails.map(u => u.UserName);
-            console.log("vendorCodes =:",userDetails)
-            
-            const res = await axios.post(`${baseURL}${config.getVendorWithFranchisee}`,{vendorCodes});
-            if (res.data.code === 200) {
-                setVendorCodeWithName(res.data.data);
-            }
-        }  catch (err) {
-            console.error("Error fetching vendor:", err);
-            } 
-        };
-        fetchVendorFranchisee();
-    },[selectedFranchiseName])
+  useEffect(() => {
+    const fetchVendorFranchisee = async () => {
+      try {
+        const vendorCodes = userDetails.map(u => u.UserName);
+        console.log("vendorCodes =:", userDetails)
+
+        const res = await apiPost(config.getVendorWithFranchisee, { vendorCodes });
+        if (res.data.code === 200) {
+          setVendorCodeWithName(res.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching vendor:", err);
+      }
+    };
+    fetchVendorFranchisee();
+  }, [selectedFranchiseName])
 
 
 
@@ -170,7 +171,7 @@ function Ledger() {
         toast.error("Provide company");
         return;
       }
-       if (selectedFranchiseName == "") {
+      if (selectedFranchiseName == "") {
         toast.error("Provide vendor Code");
         return;
       }
@@ -184,7 +185,7 @@ function Ledger() {
       }
       else {
         setLoading(true);
-        const response = await axios.post(`${baseURL}${config.getledgerdetails}`, {
+        const response = await apiPost(config.getledgerdetails, {
           company: companyCodes,
           fromDate: fromDate ? formatDateLocal(fromDate) : "",
           toDate: toDate ? formatDateLocal(toDate) : "",
@@ -196,7 +197,10 @@ function Ledger() {
 
         } else if (response.data.code === 201) {
           //console.log(response.data)
-          if (response.data.ledger_details.INT_LEDGER.length > 0) {
+          if (response.data &&
+            response.data.ledger_details &&
+            Array.isArray(response.data.ledger_details.INT_LEDGER) &&
+            response.data.ledger_details.INT_LEDGER.length > 0) {
             let originalData = response.data.ledger_details
             const formatted = response.data.ledger_details.INT_LEDGER.map(row => ({
               ...row,
@@ -215,6 +219,7 @@ function Ledger() {
           else {
             setLedgerDetails({})
             setLoading(false);
+            toast.error("No Data found for entered details");
           }
         }
         else {
@@ -239,52 +244,52 @@ function Ledger() {
   //   }, 100);
   // };
 
-    const handleCsvBtnClick = () => {
-      setTimeout(() => {
-        if (!tableRef.current) {
-          console.log("Table ref not ready");
-          return;
-        }
+  const handleCsvBtnClick = () => {
+    setTimeout(() => {
+      if (!tableRef.current) {
+        console.log("Table ref not ready");
+        return;
+      }
 
-        const tableData = tableRef.current.dataSource || [];
-        if (tableData.length === 0) {
-          toast.error("No data to export");
-          return;
-        }
+      const tableData = tableRef.current.dataSource || [];
+      if (tableData.length === 0) {
+        toast.error("No data to export");
+        return;
+      }
 
-        // Extract visible column fields and labels
-        const visibleFields = columns.map(col => col.dataField);
-        const headerLabels = columns.map(col => `"${col.label}"`);
-        
-        // Start building CSV
-        let csvContent = headerLabels.join(",") + "\n";
+      // Extract visible column fields and labels
+      const visibleFields = columns.map(col => col.dataField);
+      const headerLabels = columns.map(col => `"${col.label}"`);
 
-        tableData.forEach(row => {
-          const rowValues = visibleFields.map(field => {
-            let value = row[field] ?? '';
-            value = value.toString().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
-            if (isNaN(value) || value.includes(',') || value.includes(' ')) {
-              value = `"${value}"`;
-            }
-            return value;
-          });
-          csvContent += rowValues.join(",") + "\n";
+      // Start building CSV
+      let csvContent = headerLabels.join(",") + "\n";
+
+      tableData.forEach(row => {
+        const rowValues = visibleFields.map(field => {
+          let value = row[field] ?? '';
+          value = value.toString().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+          if (isNaN(value) || value.includes(',') || value.includes(' ')) {
+            value = `"${value}"`;
+          }
+          return value;
         });
+        csvContent += rowValues.join(",") + "\n";
+      });
 
-        // Trigger download
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        if (link.download !== undefined) {
-          const url = URL.createObjectURL(blob);
-          link.setAttribute("href", url);
-          link.setAttribute("download", "ledger.csv");
-          link.style.visibility = "hidden";
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      }, 100);
-    };
+      // Trigger download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "ledger.csv");
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }, 100);
+  };
 
 
   return (
@@ -317,12 +322,12 @@ function Ledger() {
                           <label htmlFor="fullName">Vendor Code </label>
                           <select name="selectedFranchiseName" id="country" className="form-select" value={selectedFranchiseName}
                             onChange={handleChange}>
-                           <option value="" disabled> Select Vendor Code </option>
-                              {vendorCodeWithName.map((option) => (
-                                  <option key={option.vendorCode} value={option.vendorCode}>
-                                      {option.vendorCode}  {option.vendorName ? ` - ${option.vendorName}` : ""}
-                                  </option>
-                              ))}
+                            <option value="" disabled> Select Vendor Code </option>
+                            {vendorCodeWithName.map((option) => (
+                              <option key={option.vendorCode} value={option.vendorCode}>
+                                {option.vendorCode}  {option.vendorName ? ` - ${option.vendorName}` : ""}
+                              </option>
+                            ))}
                           </select>
                         </div>
                       </div>
@@ -332,15 +337,15 @@ function Ledger() {
                           <label htmlFor="fullName">From Date </label>
                           {/* <input id="fromdate" className="form-control flatpickr flatpickr-input active" type="text" placeholder="Select Date.." /> */}
                           <CustomFlatpickr
-                                value={fromDate}
-                                maxDate={new Date()} // from date must be < today
-                                onChange={(date) => {
-                                  setFromDate(date);
-                                  if (toDate && date && new Date(toDate) < new Date(date)) {
-                                    setToDate(null); // reset if current toDate is invalid
-                                  }
-                                }}
-                              />
+                            value={fromDate}
+                            maxDate={new Date()} // from date must be < today
+                            onChange={(date) => {
+                              setFromDate(date);
+                              if (toDate && date && new Date(toDate) < new Date(date)) {
+                                setToDate(null); // reset if current toDate is invalid
+                              }
+                            }}
+                          />
                         </div>
                       </div>
 
@@ -392,7 +397,7 @@ function Ledger() {
 
                       <div className="col-lg-12 mt-3">
                         <div className="d-flex justify-content-between align items center">
-                          <div className=""><b>Period : <span className="text-danger">   {fromDate && toDate && ledgerDetails?.OPEN_BALANCE ? (
+                          <div className=""><b>Period : <span className="text-danger">   {fromDate && toDate ? (
                             <span className="text-danger"> {formatDateDisplay(fromDate)} to {formatDateDisplay(toDate)}</span>
                           ) : null}</span></b></div>
                           {/* <div className=""><b>Opening Balance : <span className="text-danger">{ledgerDetails?.OPEN_BALANCE}</span></b></div>
@@ -436,7 +441,7 @@ function Ledger() {
                                   id="table"
                                   appearance={appearance}
                                   dataExport={dataExport}
-                                  dataSource={ledgerDetails?.INT_LEDGER}
+                                  dataSource={ledgerDetails?.INT_LEDGER || []}
                                   paging={paging}
                                   pageIndex={pageIndex}
                                   pageSize={pageSize}

@@ -1,4 +1,5 @@
 import React from 'react';
+import ProtectedRoute from './protectedRoute';
 import Layout from './Components/layout';
 import Login from './Pages/login';
 import ForgotPassword from './Pages/forgotPassword';
@@ -17,6 +18,7 @@ import KnowldgeGeneral from './Admin_Pages/Knowldge_Center_pages/general';
 import KnowldgeSop from './Admin_Pages/Knowldge_Center_pages/sop';
 import KnowldgeFranchiseeHelpbook from './Admin_Pages/Knowldge_Center_pages/franchiseeHelpbook';
 import KnowldgeTrainingModule from './Admin_Pages/Knowldge_Center_pages/trainingModule';
+import AdminCommission from './Admin_Pages/adminCommission';
 
 import Dashboard from './Pages/dashboard';
 import Store from './Pages/store';
@@ -46,42 +48,47 @@ function App() {
             <Routes>
                {/* Common Route*/}
                <Route path='/' element={<Login />} />
-               <Route path= "/forgotPassword" element={<ForgotPassword/>} />
-                {/* Admin Routes */}
-                <Route path='/admin' element={<AdminLayout />}>
-                  <Route path="/admin/changePassword" element={<ChangePassword/>}/> 
-                  <Route path='/admin/dashboard' element={<AdminDashboard />} />
-                  <Route path='/admin/user' element={<AdminUser />} />
-                  <Route path='/admin/alert' element={<AdminAlert />} />
-                  <Route path='/admin/contact' element={<AdminContact />} />
-                  <Route path='/admin/franchise' element={<AdminFranchise />} />
-                  <Route path='/admin/profile' element={< Profile/>} />
-                  <Route path='/admin/cmr_ndc_details' element={<AdminCmrNdcDetails />} />
-                  <Route path='/admin/adminKnowledgeCenter' element={<AdminKnowledgeCenter/>} />
-                  <Route path='/admin/adminKnowledgeCenter/general' element={<KnowldgeGeneral/>} />
-                  <Route path='/admin/adminKnowledgeCenter/sop' element={<KnowldgeSop/>} />
-                  <Route path='/admin/adminKnowledgeCenter/trainingModule' element={<KnowldgeTrainingModule/>} />
-                  <Route path='/admin/adminKnowledgeCenter/franchiseeHelpbook' element={<KnowldgeFranchiseeHelpbook/>} />
-                </Route>
-                {/* User Routes */}
-               <Route path='/user' element={<Layout />}>
-                  <Route path='/user/dashboard' element={<Dashboard />} />
-                  <Route path='/user/store' element={<Store />} />
-                  <Route path='/user/declaration' element={<Declaration />} />
-                  <Route path='/user/statements/ledger' element={<Ledger />} />
-                  <Route path='/user/statements/commission' element={<Commission />} />
-                  <Route path='/user/statements/creditdebit' element={<CreditDebit />} />
-                  <Route path='/user/statements/tdsCertificates' element={< TdsCertificates />} />
-                  <Route path='/user/statements/securitydeposit' element={< SecurityDeposit />} />
-                  <Route path='/user/agreements' element={<Agreements />} />
-                  <Route path='/user/support' element={<Support />} />
-                  <Route path='/user/profile' element={<Profile />} />
-                  <Route path='/user/knowledgecenter' element={<KnowledgeCenter />} />
-                  <Route path='/user/knowledgecenter/userGeneral' element={<UserGeneral />} />
-                  <Route path='/user/knowledgecenter/userSOP' element={<UserSop />} />
-                  <Route path='/user/knowledgecenter/userTraining' element={<UserTraining/>} />
-                  <Route path='/user/knowledgecenter/userFranchisee' element={<UserFranchisee />} />
-                  <Route path='/user/knowledgecenter/userSearchResult' element={<UserSearchResult />} />
+               <Route path="/forgotPassword" element={<ForgotPassword />} />
+               <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                  {/* Admin Routes */}
+                  <Route path='/admin' element={<AdminLayout />}>
+                     <Route path="/admin/changePassword" element={<ChangePassword />} />
+                     <Route path='/admin/dashboard' element={<AdminDashboard />} />
+                     <Route path='/admin/user' element={<AdminUser />} />
+                     <Route path='/admin/alert' element={<AdminAlert />} />
+                     <Route path='/admin/contact' element={<AdminContact />} />
+                     <Route path='/admin/franchise' element={<AdminFranchise />} />
+                     <Route path='/admin/profile' element={< Profile />} />
+                     <Route path='/admin/cmr_ndc_details' element={<AdminCmrNdcDetails />} />
+                     <Route path='/admin/adminKnowledgeCenter' element={<AdminKnowledgeCenter />} />
+                     <Route path='/admin/adminKnowledgeCenter/general' element={<KnowldgeGeneral />} />
+                     <Route path='/admin/adminKnowledgeCenter/sop' element={<KnowldgeSop />} />
+                     <Route path='/admin/adminKnowledgeCenter/trainingModule' element={<KnowldgeTrainingModule />} />
+                     <Route path='/admin/adminKnowledgeCenter/franchiseeHelpbook' element={<KnowldgeFranchiseeHelpbook />} />
+                     <Route path='/admin/adminCommission' element={<AdminCommission />} />
+                  </Route>
+               </Route>
+               {/* User Routes */}
+               <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+                  <Route path='/user' element={<Layout />}>
+                     <Route path='/user/dashboard' element={<Dashboard />} />
+                     <Route path='/user/store' element={<Store />} />
+                     <Route path='/user/declaration' element={<Declaration />} />
+                     <Route path='/user/statements/ledger' element={<Ledger />} />
+                     <Route path='/user/statements/commission' element={<Commission />} />
+                     <Route path='/user/statements/creditdebit' element={<CreditDebit />} />
+                     <Route path='/user/statements/tdsCertificates' element={< TdsCertificates />} />
+                     <Route path='/user/statements/securitydeposit' element={< SecurityDeposit />} />
+                     <Route path='/user/agreements' element={<Agreements />} />
+                     <Route path='/user/support' element={<Support />} />
+                     <Route path='/user/profile' element={<Profile />} />
+                     <Route path='/user/knowledgecenter' element={<KnowledgeCenter />} />
+                     <Route path='/user/knowledgecenter/userGeneral' element={<UserGeneral />} />
+                     <Route path='/user/knowledgecenter/userSOP' element={<UserSop />} />
+                     <Route path='/user/knowledgecenter/userTraining' element={<UserTraining />} />
+                     <Route path='/user/knowledgecenter/userFranchisee' element={<UserFranchisee />} />
+                     <Route path='/user/knowledgecenter/userSearchResult' element={<UserSearchResult />} />
+                  </Route>
                </Route>
             </Routes>
          </BrowserRouter>

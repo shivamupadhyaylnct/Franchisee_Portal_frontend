@@ -5,6 +5,10 @@ import Table from 'smart-webcomponents-react/table';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from "sweetalert2";
+<<<<<<< HEAD
+=======
+import { apiPost, apiGet, apiFormDataPost } from '../apiCommon';
+>>>>>>> branch-b
 import { baseURL } from '../base';
 import { config } from '../config';
 import { Dialog, DialogActions, DialogContent, DialogTitle, } from "@mui/material";
@@ -56,6 +60,7 @@ function user() {
     const pageIndex = 0;
     const pageSize = 10;
 
+<<<<<<< HEAD
  
     const resetFormState = () => {
         setAddUserForm({
@@ -70,6 +75,9 @@ function user() {
             userType: ""
         });
     };
+=======
+
+>>>>>>> branch-b
 
     //=========================( Save And Update Logics )=======================================
 
@@ -79,6 +87,7 @@ function user() {
         try {
             // Edit logic
             if (isEditing) {
+<<<<<<< HEAD
                 console.log("isEditing at save",isEditing);
                 //console.log("update query is running", isEditing)
                 const response = await axios.patch(`${baseURL}${config.editUserdetails}${username}/`, addUserForm);
@@ -88,6 +97,20 @@ function user() {
                     fetchUsers(); // details fetched to the table
                     resetFormState();// this will Clear input fields once data inserted successfully
                     setIsEditing(false); // editing state reset after update
+=======
+                //console.log("update query is running", isEditing)
+                const response = await apiPost(config.editUserdetails, addUserForm);
+                if (response.data.code === 200) {
+                    //console.log("response.data", response.data)
+                    toast.success("User updated successfully!");
+                    fetchUsers();
+
+                    // this will Clear input fields once data inserted successfully
+                    setAddUserForm({
+                        username: "", password: "", address: "", city: "", state: "", pincode: "", email: "", panno: "", userType: ""
+                    });
+                    setIsEditing(false); // reset after update
+>>>>>>> branch-b
 
                 } else {
                     toast.error("Failed to update User Details.");
@@ -97,11 +120,22 @@ function user() {
 
 
             // else do the save logic
+<<<<<<< HEAD
             const response = await axios.post(`${baseURL}${config.adduserdetails}`, addUserForm);
             if (response.data.code === 200) {
                 toast.success("User added successfully!");
                 fetchUsers();// this will refresh the table and rerender the new data
                 resetFormState();  // this will Clear input fields once data inserted successfully
+=======
+            const response = await apiPost(config.adduserdetails, addUserForm);
+            if (response.data.code === 200) {
+                toast.success("User added successfully!");
+                fetchUsers();// this will refresh the table and rerender the new data
+                // this will Clear input fields once data inserted successfully
+                setAddUserForm({
+                    username: "", password: "", address: "", city: "", state: "", pincode: "", email: "", panno: "", userType: ""
+                });
+>>>>>>> branch-b
                 return response.data;
             } else {
                 alert("Failed to add user. Please try again.");
@@ -125,13 +159,18 @@ function user() {
     // ========================== ( table Edit and Delete Button , column ) =================================
 
 
+<<<<<<< HEAD
     const validationSchema = Yup.object().shape({ 
+=======
+    const validationSchema = Yup.object().shape({
+>>>>>>> branch-b
         username: Yup.string().trim().required("Username is required"),
         email: Yup.string()
             .trim()
             .matches(
                 /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.(com|in)$/,
                 "Email must contain @ and ends with .com or .in"
+<<<<<<< HEAD
             ) .required("Email is required"),
             //password Check only in add user form
         ...(!isEditing && {
@@ -146,6 +185,19 @@ function user() {
                     .oneOf([Yup.ref('password'), null], "Passwords must match")
                     .required("Confirm Password is required"),
         }),
+=======
+            ).required("Email is required"),
+        password: Yup.string()
+            .trim()
+            .matches(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])(?!.*\s)[A-Za-z\d@$!%*?&]{8,}$/,
+                "Password must be 8 characters (least - 1 uppercase, 1 lowercase, 1 number, and 1 special character,No Space)"
+            ).required("Password is required"),
+        conformPassword: Yup.string()
+            .trim()
+            .oneOf([Yup.ref('password'), null], "Passwords must match")
+            .required("Confirm Password is required"),
+>>>>>>> branch-b
         state: Yup.string().trim().matches(/^[A-Za-z\s]+$/, "State must contain letters only")
             .required("State is required"),
         city: Yup.string().trim().matches(/^[A-Za-z\s]+$/, "City must contain letters only")
@@ -226,8 +278,13 @@ function user() {
 
     },
     {
+<<<<<<< HEAD
         label: 'Action', 
         // dataField: 'vendorUID',
+=======
+        label: 'Action',
+        dataField: 'vendorUID',
+>>>>>>> branch-b
         width: 150,
         formatFunction: (settings) => {
             const editDiv = document.createElement('span');
@@ -262,6 +319,7 @@ function user() {
         }
 
     },
+<<<<<<< HEAD
 
     ];
 
@@ -273,6 +331,16 @@ function user() {
             const response = await axios.get(`${baseURL}${config.getuserdetails}${vendorCode}/`);
             const userDetails = response.data;
             console.log("Fetched user details from api in edit:", userDetails);
+=======
+    ];
+
+
+    const handleEdit = async (vendorCode) => {
+        setIsEditing(true);
+        try {
+            const response = await apiGet(config.getuserdetails, vendorCode);
+            const userDetails = response.data;
+>>>>>>> branch-b
             //console.log("Detail of the user to update are (handle Edit )=>>", userDetails)
             // Set form values
             setAddUserForm({
@@ -299,6 +367,7 @@ function user() {
     };
 
 
+<<<<<<< HEAD
     // Debounced handleEdit
     
     // const debounce = (func, delay) => {
@@ -338,6 +407,8 @@ function user() {
     // }, [isEditing]);
 
 
+=======
+>>>>>>> branch-b
     const handleDelete = async (userCodes) => {
         const [vendorUID, vendorCode] = userCodes.split('|');
         //console.log("codes are=>>", vendorCode, vendorUID);
@@ -361,7 +432,11 @@ function user() {
         if (!result.isConfirmed) return;
 
         try {
+<<<<<<< HEAD
             await axios.delete(`${baseURL}${config.deleteUserdetails}${vendorUID}/${vendorCode}/`);
+=======
+            await apiPost(config.deleteUserdetails, { "vendorUID": vendorUID, "vendorCode": vendorCode });
+>>>>>>> branch-b
             await Swal.fire("Deleted!", "User has been deleted.", "success");
 
             // Refresh table after deletion
@@ -400,7 +475,11 @@ function user() {
 
     const fetchUsers = async () => {
         try {
+<<<<<<< HEAD
             const response = await axios.get(`${baseURL}${config.getalluserDetails}`);
+=======
+            const response = await apiGet(config.getalluserDetails);
+>>>>>>> branch-b
             const formatted = response.data.map((item, index) => ({
                 sno: index + 1,
                 vendorCode: item.vendorCode,
@@ -536,11 +615,16 @@ function user() {
 
 
             {/*=====================(Modal content Start )============================ */}
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> branch-b
             <Dialog
                 open={isAddUserPopup}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+<<<<<<< HEAD
                 sx={{ ".MuiDialog-paper": { maxWidth: "55rem !important", },
                 }} >
             <DialogTitle id="alert-dialog-title">{isEditing ?"Edit User":"Add User"}</DialogTitle>
@@ -715,11 +799,190 @@ function user() {
                 </Formik>
             </DialogContent>
         
+=======
+                sx={{
+                    ".MuiDialog-paper": { maxWidth: "55rem !important", },
+                }} >
+                <DialogTitle id="alert-dialog-title">Add User</DialogTitle>
+
+                <IconButton
+                    aria-label="close"
+                    onClick={() => setIsAddUserPopup(false)}
+                    sx={(theme) => ({ position: 'absolute', right: 8, top: 8, color: theme.palette.grey[500], })} >
+                    <CloseIcon />
+                </IconButton>
+
+                <DialogContent
+                    sx={{ width: { xs: '80vw', sm: '80vw', md: '55rem' }, minHeight: '20rem', }}>
+                    <Formik initialValues={addUserForm}
+                        validationSchema={validationSchema}
+                        onSubmit={async (values) => {
+                            const { conformPassword, ...userData } = values; // Destructuring remove conformPassword
+                            await handleSave(userData);
+                            setIsAddUserPopup(false)
+                        }} >
+                        {({ errors, touched, isValid, dirty }) => (
+                            <Form noValidate>
+                                <Grid container rowSpacing={0} columnSpacing={2} justify="center">
+                                    <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="username">User Name</label>
+                                            <Field name="username" type="text" className="form-control mb-3" id="profession" placeholder="User name" readOnly={isEditing} />
+                                            <ErrorMessage name="username" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>
+                                    <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="email">Email ID</label>
+                                            <Field name="email">
+                                                {({ field, form }) => (
+                                                    <input
+                                                        {...field}
+                                                        type="text"
+                                                        id="email"
+                                                        placeholder="email"
+                                                        className="form-control mb-3"
+                                                        value={field.value || ""}
+                                                        onChange={(e) =>
+                                                            form.setFieldValue("email", e.target.value.toLowerCase())
+                                                        }
+                                                    />
+                                                )}
+                                            </Field>
+                                            <ErrorMessage name="email" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>
+                                    {!isEditing && <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="password">Password</label>
+                                            <div className="input-group mb-3">
+                                                <Field name="password">
+                                                    {({ field }) => (
+                                                        <div style={{ position: 'relative', width: '100%' }}>
+                                                            <input
+                                                                {...field} type={showPassword ? "text" : "password"}
+                                                                className="form-control"
+                                                                id="password"
+                                                                placeholder="Enter Password"
+                                                            />
+                                                            <IconButton onClick={() => setShowPassword(prev => !prev)} style={{ position: 'absolute', right: 5, top: 5 }} >
+                                                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                            </IconButton>
+                                                        </div>
+                                                    )}
+                                                </Field>
+                                            </div>
+                                            <ErrorMessage name="password" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>}
+                                    {!isEditing && <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="conformPassword">Conform Password</label>
+                                            <div className="input-group mb-3">
+                                                <Field name="conformPassword">
+                                                    {({ field }) => (
+                                                        <div style={{ position: 'relative', width: '100%' }}>
+                                                            <input
+                                                                {...field} type={showConformPassword ? "text" : "password"}
+                                                                className="form-control"
+                                                                id="conformPassword"
+                                                                placeholder="Confirm Password"
+                                                            />
+                                                            <IconButton onClick={() => setShowConformPassword(prev => !prev)} style={{ position: 'absolute', right: 5, top: 5 }} >
+                                                                {showConformPassword ? <VisibilityOff /> : <Visibility />}
+                                                            </IconButton>
+                                                        </div>
+                                                    )}
+                                                </Field>
+                                            </div>
+                                            <ErrorMessage name="conformPassword" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>}
+
+                                    <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="state">State</label>
+                                            <Field name="state" type="text" className="form-control mb-3" id="state" placeholder="state" />
+                                            <ErrorMessage name="state" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>
+                                    <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="city">City</label>
+                                            <Field name="city" type="text" className="form-control mb-3" id="city" placeholder="city" />
+                                            <ErrorMessage name="city" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>
+                                    <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="pincode">Pincode</label>
+                                            <Field name="pincode" type="text" className="form-control mb-3" id="pincode" placeholder="pincode" />
+                                            <ErrorMessage name="pincode" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>
+                                    <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="address">Address</label>
+                                            <Field name="address" type="text" className="form-control mb-3" id="address" placeholder="address" />
+                                            <ErrorMessage name="address" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>
+                                    <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="panno">Pan No.</label>
+                                            <Field name="panno">
+                                                {({ field, form }) => (
+                                                    <input
+                                                        {...field}
+                                                        type="text"
+                                                        id="panno"
+                                                        placeholder="Enter Pan Number"
+                                                        className="form-control mb-3"
+                                                        value={field.value || ""}
+                                                        onChange={(e) =>
+                                                            form.setFieldValue("panno", e.target.value.toUpperCase())
+                                                        }
+                                                    />
+                                                )}
+                                            </Field>
+                                            <ErrorMessage name="panno" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>
+                                    <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                                        <div className="form-group">
+                                            <label htmlFor="userType">User Type</label>
+                                            <Field as="select" className="form-select" name="userType">
+                                                <option value="" >Select User Type</option>
+                                                <option value="USER" >User</option>
+                                                <option value="ADMIN">Admin</option>
+                                            </Field>
+                                            <ErrorMessage name="userType" component="div" className="text-danger" />
+                                        </div>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <DialogActions>
+                                            <button className="btn btn-light-dark" onClick={() => setIsAddUserPopup(false)}>Cancel</button>
+                                            <button type="submit" className="btn btn-primary" disabled={!isValid || !dirty} > Save</button>
+                                        </DialogActions>
+                                    </Grid>
+
+
+                                </Grid>
+                            </Form>
+                        )}
+                    </Formik>
+                </DialogContent>
+
+>>>>>>> branch-b
             </Dialog>
 
             {/*=====================(Modal content End)============================ */}
         </>
     )
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> branch-b
 export default user

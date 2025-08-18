@@ -13,6 +13,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { apiPost } from "../apiCommon";
 
 function forgotPassword() {
   const [step, setStep] = useState(1); // step1 = email, 2 = OTP, 3 = reset
@@ -25,7 +26,7 @@ function forgotPassword() {
   const navigate = useNavigate();
 
   //=========== (Validation ) ==================
-   const validationSchema = Yup.object().shape({
+  const validationSchema = Yup.object().shape({
     newPassword: Yup.string()
       .matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
@@ -40,19 +41,19 @@ function forgotPassword() {
   //================== (3 step of Forget password => step1 = email, 2 = OTP, 3 = reset)======================
 
   const handleSendOtp = async () => {
-    if (!email) 
-        return toast.error("Email is required");
-        console.log(email)
+    if (!email)
+      return toast.error("Email is required");
+    console.log(email)
     try {
-        setIsLoading(true);
-        const response = await axios.post(`${baseURL}${config.sendOtpToEmail}`, { email });
-        if (response.data.code === 200) {
-            console.log("res ",response.data)
-      toast.success("OTP sent to your email");
-      setStep(2); // OTP verification process
-        } else {
-          toast.error("Email not found");
-        }
+      setIsLoading(true);
+      const response = await apiPost(config.sendOtpToEmail, { email });
+      if (response.data.code === 200) {
+        console.log("res ", response.data)
+        toast.success("OTP sent to your email");
+        setStep(2); // OTP verification process
+      } else {
+        toast.error("Email not found");
+      }
     } catch (err) {
       toast.error("Server error while sending OTP");
     } finally {
@@ -61,17 +62,17 @@ function forgotPassword() {
   };
 
   const handleVerifyOtp = async () => {
-    if (!otp) 
-        return toast.error("Enter OTP");
+    if (!otp)
+      return toast.error("Enter OTP");
     try {
-        setIsLoading(true);
-        const response = await axios.post(`${baseURL}${config.verifyEmailOtp}`, { email, otp });
-        if (response.data.code === 200) {
-      toast.success("OTP verified");
-      setStep(3);
-        } else {
-          toast.error("Invalid OTP");
-        }
+      setIsLoading(true);
+      const response = await apiPost(config.verifyEmailOtp, { email, otp });
+      if (response.data.code === 200) {
+        toast.success("OTP verified");
+        setStep(3);
+      } else {
+        toast.error("Invalid OTP");
+      }
     } catch (err) {
       toast.error("OTP verification failed");
       console.log(`OTP verification failed: ${err}`)
@@ -83,42 +84,42 @@ function forgotPassword() {
   const handleResetPassword = async (values) => {
     const { newPassword } = values;
 
-    if (!newPassword )
-        return toast.error("Password Required required");
-    if(!email)
-        return toast.error("Email is Required");
+    if (!newPassword)
+      return toast.error("Password Required required");
+    if (!email)
+      return toast.error("Email is Required");
 
 
     try {
-        const response = await axios.post(`${baseURL}${config.resetPassword}`, {
-          email,
-          newPassword,
-        });
+      const response = await apiPost(config.resetPassword, {
+        email,
+        newPassword,
+      });
 
-        if (response.data.code === 200) {
-            toast.success("Password reset successful");
-            navigate("/");
-        } else {
-          toast.error("Reset failed");
-        }
+      if (response.data.code === 200) {
+        toast.success("Password reset successful");
+        navigate("/");
+      } else {
+        toast.error("Reset failed");
+      }
     } catch (err) {
       toast.error("Error resetting password");
     }
   };
 
-//   =============( CountDown AND Resend OTP )===========
- useEffect(() => {
-        let interval;
-        if (step === 2 && timer > 0) {
-            interval = setInterval(() => {
-                setTimer((prevTime) => prevTime - 1);
-            }, 1000);
-        }
+  //   =============( CountDown AND Resend OTP )===========
+  useEffect(() => {
+    let interval;
+    if (step === 2 && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prevTime) => prevTime - 1);
+      }, 1000);
+    }
 
-        if (timer === 0) {
-            clearInterval(interval);
-            }
-        return () => clearInterval(interval);
+    if (timer === 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
   }, [step, timer]);
 
 
@@ -133,16 +134,16 @@ function forgotPassword() {
 
   const handleResendOtp = async () => {
     try {
-        const response = await axios.post(`${baseURL}${config.sendOtpToEmail}`, { email });
+      const response = await apiPost(config.sendOtpToEmail, { email });
 
-        if (response.data.code === 200) {
+      if (response.data.code === 200) {
         toast.success("OTP resent successfully!");
         setTimer(120); // reset timer to 2 mins again
-        }
+      }
     } catch (err) {
-        toast.error("Failed to resend OTP.");
+      toast.error("Failed to resend OTP.");
     }
-};
+  };
   return (
     <div className="form">
       {/* <div id="load_screen">
@@ -237,7 +238,7 @@ function forgotPassword() {
                     </center>
                   </div>
 
-{/* EMAIL VERIFICATION INPUT */}
+                  {/* EMAIL VERIFICATION INPUT */}
                   {step === 1 && (
                     <>
                       <div className="col-md-12">
@@ -247,7 +248,7 @@ function forgotPassword() {
                           </label>
                           <div className="input-group">
                             <span className="input-group-text" id="inputGroupPrepend2" >
-                                 <i className="fa fa-envelope"></i> 
+                              <i className="fa fa-envelope"></i>
                             </span>
                             <input
                               type="email"
@@ -277,25 +278,25 @@ function forgotPassword() {
                       </div>
                     </>
                   )}
-    {/* OTP verification process */}
+                  {/* OTP verification process */}
                   {step === 2 && (
                     <>
-                    <div className="col-md-12">
+                      <div className="col-md-12">
                         <div className="mb-3">
                           <label className="form-label"> Verify OTP </label>
-                             {timer > 0 ? (
-                                <p className="text-muted">OTP expires in: {formatTime(timer)}</p>
-                                ) : (
+                          {timer > 0 ? (
+                            <p className="text-muted">OTP expires in: {formatTime(timer)}</p>
+                          ) : (
                             <>
-                                <p className="text-danger mt-2"> OTP has expired </p>
-                                <button className="btn btn-link text-primary p-0" onClick={handleResendOtp}>
+                              <p className="text-danger mt-2"> OTP has expired </p>
+                              <button className="btn btn-link text-primary p-0" onClick={handleResendOtp}>
                                 Click here to resend OTP
-                                </button>
+                              </button>
                             </>
-                            )}
+                          )}
                           <div className="input-group">
                             <span className="input-group-text" id="inputGroupPrepend2" >
-                                 <i className="fa fa-envelope"></i> 
+                              <i className="fa fa-envelope"></i>
                             </span>
                             <input
                               type="text"
@@ -309,14 +310,14 @@ function forgotPassword() {
                         </div>
                       </div>
 
-                    <div className="col-12">
+                      <div className="col-12">
                         <div className="mb-1">
-                          <button type="submit" 
-                                  className="btn btn-primary w-100" 
-                                  onClick={handleVerifyOtp}
-                                  disabled={isLoading}
-                             > 
-                             {isLoading ? "Waiting..." : "Verify OTP"}
+                          <button type="submit"
+                            className="btn btn-primary w-100"
+                            onClick={handleVerifyOtp}
+                            disabled={isLoading}
+                          >
+                            {isLoading ? "Waiting..." : "Verify OTP"}
                           </button>
                         </div>
                       </div>
@@ -326,78 +327,78 @@ function forgotPassword() {
                   {/* password reset Process */}
                   {step === 3 && (
                     <>
-                    <Formik
-                    initialValues={{ newPassword: '', confirmNewPassword: '' }}
-                    validationSchema={validationSchema}
-                    onSubmit={(values) => {
-                        handleResetPassword(values);
-                    }}
-                    >
-                    {({ isValid, dirty}) => (
-                        <Form className="row">
-                        <div className="col-md-12">
-                            <div className="mb-3">
-                            <h3 className="form-label">Reset Password</h3>
+                      <Formik
+                        initialValues={{ newPassword: '', confirmNewPassword: '' }}
+                        validationSchema={validationSchema}
+                        onSubmit={(values) => {
+                          handleResetPassword(values);
+                        }}
+                      >
+                        {({ isValid, dirty }) => (
+                          <Form className="row">
+                            <div className="col-md-12">
+                              <div className="mb-3">
+                                <h3 className="form-label">Reset Password</h3>
 
-                            <div className="input-group mb-2">
-                                <Field name="newPassword">
-                                {({ field }) => (
-                                    <div style={{ position: 'relative', width: '100%' }}>
-                                    <input
-                                        {...field}
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="New Password"
-                                        className="form-control"
-                                    />
-                                    <IconButton
-                                        onClick={() => setShowPassword(prev => !prev)}
-                                        style={{ position: 'absolute', right: 5, top: 5 }}
-                                    >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                    </div>
-                                )}
-                                </Field>
-                            </div>
-                            <ErrorMessage name="newPassword" component="div" className="text-danger" />
+                                <div className="input-group mb-2">
+                                  <Field name="newPassword">
+                                    {({ field }) => (
+                                      <div style={{ position: 'relative', width: '100%' }}>
+                                        <input
+                                          {...field}
+                                          type={showPassword ? "text" : "password"}
+                                          placeholder="New Password"
+                                          className="form-control"
+                                        />
+                                        <IconButton
+                                          onClick={() => setShowPassword(prev => !prev)}
+                                          style={{ position: 'absolute', right: 5, top: 5 }}
+                                        >
+                                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                      </div>
+                                    )}
+                                  </Field>
+                                </div>
+                                <ErrorMessage name="newPassword" component="div" className="text-danger" />
 
-                            <div className="input-group mt-2">
-                                <Field name="confirmNewPassword">
-                                {({ field }) => (
-                                    <div style={{ position: 'relative', width: '100%' }}>
-                                    <input
-                                        {...field}
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        placeholder="Confirm new Password"
-                                        className="form-control"
-                                    />
-                                    <IconButton
-                                        onClick={() => setShowConfirmPassword(prev => !prev)}
-                                        style={{ position: 'absolute', right: 5, top: 5 }}
-                                    >
-                                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                    </div>
-                                )}
-                                </Field>
-                            </div>
-                            <ErrorMessage name="confirmNewPassword" component="div" className="text-danger" />
+                                <div className="input-group mt-2">
+                                  <Field name="confirmNewPassword">
+                                    {({ field }) => (
+                                      <div style={{ position: 'relative', width: '100%' }}>
+                                        <input
+                                          {...field}
+                                          type={showConfirmPassword ? "text" : "password"}
+                                          placeholder="Confirm new Password"
+                                          className="form-control"
+                                        />
+                                        <IconButton
+                                          onClick={() => setShowConfirmPassword(prev => !prev)}
+                                          style={{ position: 'absolute', right: 5, top: 5 }}
+                                        >
+                                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                      </div>
+                                    )}
+                                  </Field>
+                                </div>
+                                <ErrorMessage name="confirmNewPassword" component="div" className="text-danger" />
 
+                              </div>
                             </div>
-                        </div>
 
-                        <div className="col-12">
-                            <div className="mb-1">
-                            <button type="submit" 
-                                    className="btn btn-success mt-2 w-100"
-                                    disabled={!(isValid && dirty)}>
-                                Set New Password
-                            </button>
+                            <div className="col-12">
+                              <div className="mb-1">
+                                <button type="submit"
+                                  className="btn btn-success mt-2 w-100"
+                                  disabled={!(isValid && dirty)}>
+                                  Set New Password
+                                </button>
+                              </div>
                             </div>
-                        </div>
-                        </Form>
-                    )}
-                    </Formik>
+                          </Form>
+                        )}
+                      </Formik>
 
                     </>
                   )}

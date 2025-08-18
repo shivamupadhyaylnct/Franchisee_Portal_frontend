@@ -14,6 +14,7 @@ import { config } from "../../config";
 // Import Flatpickr styles
 import "flatpickr/dist/flatpickr.min.css";
 import "flatpickr/dist/plugins/monthSelect/style.css";
+import { apiPost } from "../../apiCommon";
 
 const CustomFlatpickr = ({ onChange }) => {
     const inputRef = useRef();
@@ -37,35 +38,34 @@ const CustomFlatpickr = ({ onChange }) => {
 
 function CreditDebit() {
     const tableRef = useRef();
-    const user = localStorage.getItem("user_details");
+    const user = sessionStorage.getItem("user_details");
     const userDetails = JSON.parse(user)
     const [storeCodes, setStoreCodes] = useState([])
     const [selectedStoreCode, setSelectedStoreCode] = useState("")
     const [fromDate, setFromDate] = useState(null);
     const [creditDebitList, setCreditDebitList] = useState([])
     const [loading, setLoading] = useState(false);
-    
     const [vendorCodeWithName, setVendorCodeWithName] = useState([]);
     // console.log("All vender code fetched are=> ", vendorCodeWithName);
     const [selectedFranchiseName, setSelectedFranchiseName] = useState("");
 
-        useEffect(()=>{
+    useEffect(() => {
         const fetchVendorFranchisee = async () => {
-        try {
-            const vendorCodes = userDetails.map(u => u.UserName);
-            // console.log("vendorCodes =:",userDetails)
-            
-            const res = await axios.post(`${baseURL}${config.getVendorWithFranchisee}`,{vendorCodes});
-            if (res.data.code === 200) {
-                setVendorCodeWithName(res.data.data);
-                // console.log("hgsvdh",res.data.data)
+            try {
+                const vendorCodes = userDetails.map(u => u.UserName);
+                // console.log("vendorCodes =:",userDetails)
+
+                const res = await apiPost(config.getVendorWithFranchisee, { vendorCodes });
+                if (res.data.code === 200) {
+                    setVendorCodeWithName(res.data.data);
+                    // console.log("hgsvdh",res.data.data)
+                }
+            } catch (err) {
+                console.error("Error fetching vendor:", err);
             }
-        } catch (err) {
-            console.error("Error fetching vendor:", err);
-            } 
         };
         fetchVendorFranchisee();
-    },[selectedFranchiseName])
+    }, [selectedFranchiseName])
 
 
 
@@ -128,7 +128,7 @@ function CreditDebit() {
 
 
     async function getStoreCodes() {
-        const response = await axios.post(`${baseURL}${config.getallstoredetails}`, {
+        const response = await apiPost(config.getallstoredetails, {
             storeUID: selectedFranchiseName
         });
         try {
@@ -183,7 +183,7 @@ function CreditDebit() {
                 }
                 //console.log(data)
                 setLoading(true);
-                const response = await axios.post(`${baseURL}${config.getcreditdebit}`, data);
+                const response = await apiPost(config.getcreditdebit, data);
                 if (response.data.code === 400) {
                     toast.error("Provide Mandatory fields - Store code,Month & Year ");
 
@@ -264,7 +264,7 @@ function CreditDebit() {
                                                             Select Store Code
                                                         </option>
                                                         {storeCodes.map((option) => (
-                                                            <option key={option.LEGACY_CODE} value={option.LEGACY_CODE}>{option.LEGACY_CODE.replace(/^0+/,'')}</option>
+                                                            <option key={option.LEGACY_CODE} value={option.LEGACY_CODE}>{option.LEGACY_CODE.replace(/^0+/, '')}</option>
                                                         ))}
                                                     </select>
                                                 </div>

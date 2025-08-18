@@ -6,6 +6,7 @@ import { baseURL } from "../../base";
 import { config } from "../../config";
 import { Link } from "react-router-dom";
 import Table from "smart-webcomponents-react/table";
+import { apiGet } from "../../apiCommon";
 function userSOP() {
 
   const [sopData, setSopData] = useState([]);
@@ -57,7 +58,7 @@ function userSOP() {
 
   const fetchTabledata = async () => {
     try {
-      const response = await axios.get( `${baseURL}${config.getKnowledgeCenterSOPFiles}` );
+      const response = await apiGet(config.getKnowledgeCenterSOPFiles);
       const result = await response.data;
 
       if (result.code === 200 && result.data) {
@@ -80,70 +81,70 @@ function userSOP() {
 
 
   return (
-      <div id="content" className="main-content">
-        <div className="layout-px-spacing1">
-          <div className="middle-content container-xxl p-0">
-            <div id="tabsSimple" className="col-xl-12 col-12 layout-spacing mt-3">
-              <div className="statbox widget">
-                {/* ================= (Back and addUser Button) ================== */}
-  
-                <div className="box box-shadow d-flex align-items-center justify-content-between ">
-                  <h4 className="p-3">SOP</h4>
-                  <div className="d-flex gap-2 m-3">
-                    <Link to="/user/knowledgecenter">
-                      <button className="btn btn-primary">
-                        <i className="fa fa-arrow-left me-2"></i> Back
-                      </button>
-                    </Link>
-                  </div>
-                </div>
-  
-                {/* ======================================= */}
-                <div className="widget-content widget-content-area pt-0">
-                  <div className="tab-content" id="pills-tabContent">
+    <div id="content" className="main-content">
+      <div className="layout-px-spacing1">
+        <div className="middle-content container-xxl p-0">
+          <div id="tabsSimple" className="col-xl-12 col-12 layout-spacing mt-3">
+            <div className="statbox widget">
+              {/* ================= (Back and addUser Button) ================== */}
 
-                    <div className="row mt-4">
-                      <div
-                        className="col-xl-12 col-lg-12 col-sm-12  layout-spacing"
-                        style={{ overflowX: "auto" }}
-                      >
-                        <div className="statbox widget box box-shadow">
-                          <div className="widget-content widget-content-area">
-                            <style>
-                              {" "}
-                              {` .smart-table thead th { background-color:rgb(224, 238, 249) !important; font-size: 13px !important; font-weight: 600; color: #333; } `}{" "}
-                            </style>
-                            <Table
-                              id="table"
-                              appearance={{
-                                alternationStart: 0,
-                                alternationCount: 2,
-                              }}
-                              dataExport={{
-                                view: true,
-                                viewStart: 0,
-                                viewEnd: 20,
-                              }}
-                              dataSource={sopData}
-                              paging={true}
-                              pageIndex={0}
-                              pageSize={10}
-                              columns={columns}
-                              freezeHeader={true}
-                            ></Table>
-                          </div>
+              <div className="box box-shadow d-flex align-items-center justify-content-between ">
+                <h4 className="p-3">SOP</h4>
+                <div className="d-flex gap-2 m-3">
+                  <Link to="/user/knowledgecenter">
+                    <button className="btn btn-primary">
+                      <i className="fa fa-arrow-left me-2"></i> Back
+                    </button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* ======================================= */}
+              <div className="widget-content widget-content-area pt-0">
+                <div className="tab-content" id="pills-tabContent">
+
+                  <div className="row mt-4">
+                    <div
+                      className="col-xl-12 col-lg-12 col-sm-12  layout-spacing"
+                      style={{ overflowX: "auto" }}
+                    >
+                      <div className="statbox widget box box-shadow">
+                        <div className="widget-content widget-content-area">
+                          <style>
+                            {" "}
+                            {` .smart-table thead th { background-color:rgb(224, 238, 249) !important; font-size: 13px !important; font-weight: 600; color: #333; } `}{" "}
+                          </style>
+                          <Table
+                            id="table"
+                            appearance={{
+                              alternationStart: 0,
+                              alternationCount: 2,
+                            }}
+                            dataExport={{
+                              view: true,
+                              viewStart: 0,
+                              viewEnd: 20,
+                            }}
+                            dataSource={sopData}
+                            paging={true}
+                            pageIndex={0}
+                            pageSize={10}
+                            columns={columns}
+                            freezeHeader={true}
+                          ></Table>
                         </div>
                       </div>
                     </div>
-                    {/* =================== ( Table End ) ============================ */}
                   </div>
+                  {/* =================== ( Table End ) ============================ */}
                 </div>
-                {/* ==================================== */}
               </div>
+              {/* ==================================== */}
             </div>
           </div>
         </div>
       </div>
+    </div>
   )
 }
 

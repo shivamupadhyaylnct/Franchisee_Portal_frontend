@@ -6,11 +6,12 @@ import cover2 from '../../src/assets/img/cover2.jpg';
 import axios from 'axios';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { apiPost } from "../apiCommon";
 import { baseURL } from "../base";
 import { config } from "../config";
 
 function Store() {
-    const user = localStorage.getItem("user_details");
+    const user = sessionStorage.getItem("user_details");
     const userDetails = JSON.parse(user)
 
     const [storeDetails, setStoreDetails] = useState({})
@@ -24,7 +25,7 @@ function Store() {
     // console.log("All vender code fetched are=> ", vendorCodeWithName);
 
     const [selectedVendor, setSelectedVendor] = useState('');
-	const [selectedFranchiseName, setSelectedFranchiseName] = useState("");
+    const [selectedFranchiseName, setSelectedFranchiseName] = useState("");
     const handleStoreCodeChange = (value) => {
         setSelectedStoreCode(value);
         setActiveStoreCode(value);
@@ -45,35 +46,34 @@ function Store() {
         return `${day}-${month}-${year}`;
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         const fetchVendorFranchisee = async () => {
-        try {
-			const vendorCodes = userDetails.map(u => u.UserName);
-            // console.log("vendorCodes =:",userDetails)
+            try {
+                const vendorCodes = userDetails.map(u => u.UserName);
+                // console.log("vendorCodes =:",userDetails)
 
-            /*if(userDetails.length === 1 && userDetails[0]?.UserType === "USER"){
-                console.log("vendor Login is :",userDetails[0]?.UserName)
-                setVendorCodeWithName([{
-                    vendorCode: userDetails[0]?.UserName
-                }]);
-                return; // skip API call
-            }*/
-            const res = await axios.post(`${baseURL}${config.getVendorWithFranchisee}`,{vendorCodes});
-            if (res.data.code === 200) {
-                setVendorCodeWithName(res.data.data);
-                // console.log("vendor with name",res.data.data)
-            }
+                /*if(userDetails.length === 1 && userDetails[0]?.UserType === "USER"){
+                    console.log("vendor Login is :",userDetails[0]?.UserName)
+                    setVendorCodeWithName([{
+                        vendorCode: userDetails[0]?.UserName
+                    }]);
+                    return; // skip API call
+                }*/
+
+                const res = await apiPost(config.getVendorWithFranchisee, { vendorCodes });
+                if (res.data.code === 200) {
+                    setVendorCodeWithName(res.data.data);
+                    // console.log("vendor with name",res.data.data)
+                }
             } catch (err) {
-            console.error("Error fetching vendor:", err);
-            } 
+                console.error("Error fetching vendor:", err);
+            }
         };
         fetchVendorFranchisee();
-    },[selectedFranchiseName])
+    }, [selectedFranchiseName])
 
     async function getStoreCodes() {
-        const response = await axios.post(`${baseURL}${config.getallstoredetails}`, {
-            storeUID: selectedVendor
-        });
+        const response = await apiPost(config.getallstoredetails, { storeUID: selectedVendor });
         try {
             if (response.data.code === 201) {
                 return response.data.all_store_details;
@@ -87,9 +87,8 @@ function Store() {
 
     async function getStoreDetails(value) {
         try {
-            const response = await axios.post(`${baseURL}${config.getstoredetails}`, {
-                storeUID: value
-            });
+
+            const response = await apiPost(config.getstoredetails, { storeUID: value });
             if (response.data.code === 404) {
                 toast.error("User not found");
 
@@ -155,13 +154,13 @@ function Store() {
                                                     onChange={handleVendorCodeChange}
                                                 >
                                                     <option value="" disabled> Select Vendor Code </option>
-                                                        {vendorCodeWithName.map((option) => (
-                                                            <option key={option.vendorCode} value={option.vendorCode}>
-                                                                {option.vendorCode}  {option.vendorName ? ` - ${option.vendorName}` : ""}
-                                                            </option>
-                                                        ))}
+                                                    {vendorCodeWithName.map((option) => (
+                                                        <option key={option.vendorCode} value={option.vendorCode}>
+                                                            {option.vendorCode}  {option.vendorName ? ` - ${option.vendorName}` : ""}
+                                                        </option>
+                                                    ))}
                                                 </select>
-                                                
+
                                             </div>
                                         </div>
                                     </div>
@@ -227,7 +226,7 @@ function Store() {
                                                                                                                 </div>
 
                                                                                                                 <div className="col-sm-6 text-sm-end">
-                                                                                                                    <p className="inv-list-number mt-sm-3 pb-sm-2 mt-4"><span className="inv-title">Store Code : </span> <span className="inv-number">#{activeStoreCode?activeStoreCode.slice(-4):""}</span></p>
+                                                                                                                    <p className="inv-list-number mt-sm-3 pb-sm-2 mt-4"><span className="inv-title">Store Code : </span> <span className="inv-number">#{activeStoreCode ? activeStoreCode.slice(-4) : ""}</span></p>
                                                                                                                     <p className="inv-created-date mt-sm-5 mt-3"><span className="inv-title">Store Type : </span> <span className="inv-date">{storeDetails?.STORE?.STR_TYP}</span></p>
                                                                                                                     <p className="inv-due-date"><span className="inv-title">Start Date : </span> <span className="inv-date">{formatSapDate(storeDetails?.STORE?.STR_OPN_DATE)}</span></p>
                                                                                                                 </div>

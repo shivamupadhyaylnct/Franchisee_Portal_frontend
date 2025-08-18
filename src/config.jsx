@@ -24,6 +24,12 @@ export const config = {
     getKnowledgeCenterFranchiseeFiles : 'getKnowledgeCenterFiles/?category=franchiseeHelpbook',
     getKnowledgeCenterTrainingFiles : 'getKnowledgeCenterFiles/?category=trainingModules',
     searchFilesByTerms: `searchFilesByTerms/`,
+    getadmincommissiondetails: 'admin/getadmincommissiondetails/',
+    geteditadmincommissiondetail: 'admin/geteditadmincommissiondetail/',
+    deletecommissiondetail: 'admin/deletecommissiondetail/',
+    updatespecificcommission: 'admin/updatespecificcommission/',
+    addcommissiondetails: 'admin/addcommissiondetails/',
+    deletecommissionrecords: 'admin/deletecommissionrecords/',
 
     //user
     getallalerts: 'user/getallalerts/',

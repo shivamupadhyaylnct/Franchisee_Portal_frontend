@@ -7,10 +7,11 @@ import axios from 'axios';
 import { BeatLoader } from 'react-spinners';
 import { baseURL, base } from '../../base';
 import { config } from '../../config';
+import { apiPost } from '../../apiCommon';
 
 function tdsCertificates() {
     const tableRef = useRef();
-    const user = localStorage.getItem("user_details");
+    const user = sessionStorage.getItem("user_details");
     const userDetails = JSON.parse(user)
 
     const [vendorCodeWithName, setVendorCodeWithName] = useState([]);
@@ -23,23 +24,23 @@ function tdsCertificates() {
     const [tableData, setTableData] = useState([]);
     const [loading, setLoading] = useState(false);
 
- 
-        useEffect(()=>{
+
+    useEffect(() => {
         const fetchVendorFranchisee = async () => {
             try {
-                    const vendorCodes = userDetails.map(u => u.UserName);
-                    // console.log("vendorCodes =:",userDetails)
-                    
-                    const res = await axios.post(`${baseURL}${config.getVendorWithFranchisee}`,{vendorCodes});
-                    if (res.data.code === 200) {
-                        setVendorCodeWithName(res.data.data);
-                    }
-                } catch (err) {
-                    console.error("Error fetching vendor:", err);
-                    } 
+                const vendorCodes = userDetails.map(u => u.UserName);
+                // console.log("vendorCodes =:",userDetails)
+
+                const res = await apiPost(config.getVendorWithFranchisee, { vendorCodes });
+                if (res.data.code === 200) {
+                    setVendorCodeWithName(res.data.data);
+                }
+            } catch (err) {
+                console.error("Error fetching vendor:", err);
+            }
         };
         fetchVendorFranchisee();
-    },[])
+    }, [])
 
     useEffect(() => {
         const currentYear = new Date().getFullYear();
@@ -56,7 +57,7 @@ function tdsCertificates() {
 
         if (name === "selectedFranchiseName") {
             setSelectedFranchiseName(value);
-            console.log("value is",value)
+            console.log("value is", value)
         } else {
             setSelectedYear(value);
         }
@@ -64,72 +65,6 @@ function tdsCertificates() {
 
 
 
-    // const handleChangeTds = async () => {
-    //     try {
-    //         if (selectedFranchiseName == "") {
-    //             toast.error("Please Select Franchise");
-    //             return;
-    //         }
-    //         if (selectedYear == "") {
-    //             toast.error("Please Provide Year");
-    //             return;
-    //         }
-            
-    //         setLoading(true);
-    //         // Get franchise PANNO
-    //             const franchise = userDetails.find(item => item.UserName === selectedFranchiseName);
-    //              if (!franchise?.PANNO) {
-    //                     setLoading(false);
-    //                     toast.error("Franchise PAN number not found. Please try again.");
-    //                     return;
-    //              }
-            
-    //         // create payload 
-    //             const payload = { year: selectedYear, PANNO: franchise.PANNO };
-    //             console.log("Payload:",payload);
-
-    //             const response = await axios.post(`${baseURL}${config.getallTdsDetails}`, payload);
-    //             if (response.data.code === 200) {
-
-    //                 if (response.data.files?.length > 0) {
-    //                      const formattedData = response.data.files.map((fileName, index) => ({
-    //                         sno: index + 1,
-    //                         name: fileName,
-    //                         Download: `<a href="${base}media/tds-certificates/${fileName}" target="_blank" 
-    //                            rel="noopener noreferrer" download 
-    //                            class="btn btn-sm btn-primary">Download</a>`,
-    //                     }));
-    //                     setTableData(formattedData);
-    //                     if (tableRef.current) tableRef.current.dataSource = formattedData;
-                        
-    //                 } else if (response.data.code === 204) {
-    //                     setTableData([]);
-    //                     toast.info(`No TDS records found for ${selectedYear}.`);
-    //                 } else if (response.data.code === 404) {
-    //                     setTableData([]);
-    //                     toast.error("TDS certificate folder not found on the server.");
-    //                 } else if (response.data.code === 500) {
-    //                         setTableData([]);
-    //                         toast.error("Server error while reading TDS certificates. Please contact support.");
-    //                 } else {
-    //                         setTableData([]);
-    //                         toast.error(`Unexpected response: ${response.data.message || "Unknown error"}`);
-    //                     } 
-    //             }
-
-    //     } catch (error) {
-    //         console.error("Error fetching TDS details:", error);
-    //        if (error.response?.status === 500) {
-    //             toast.error("Server crashed while processing your request.");
-    //         } else if (error.code === "ERR_NETWORK") {
-    //             toast.error("Network error — please check your internet connection.");
-    //         } else {
-    //             toast.error("Failed to fetch TDS details. Please try again.");
-    //         }
-    //     } finally {
-    //     setLoading(false);
-    //     }
-    // };
 
 
       const handleChangeTds = async () => {
@@ -156,7 +91,7 @@ function tdsCertificates() {
                 const payload = { year: selectedYear, PANNO: franchise.PANNO };
                 console.log("Payload:",payload);
 
-                const response = await axios.post(`${baseURL}${config.getallTdsDetails}`, payload);
+                const response = await apiPost(config.getallTdsDetails, payload);
                 if (response.data.code === 200) {
                     if (response.data.files?.length > 0) {
                         const formattedData = response.data.files.map((fileName, index) => ({
@@ -247,11 +182,11 @@ function tdsCertificates() {
                                             <div className="col-md-4 mb-3">
                                                 <div className="form-group">
                                                     <label htmlFor="fullName"> Vendor Code </label>
-                                                    <select name="selectedFranchiseName" 
-                                                            id="franchise" 
-                                                            className="form-select" 
-                                                            value={selectedFranchiseName} 
-                                                            onChange={handleChange}>
+                                                    <select name="selectedFranchiseName"
+                                                        id="franchise"
+                                                        className="form-select"
+                                                        value={selectedFranchiseName}
+                                                        onChange={handleChange}>
                                                         <option value="" disabled> Select Vendor Code </option>
                                                         {vendorCodeWithName.map((option) => (
                                                             <option key={option.vendorCode} value={option.vendorCode}>

@@ -13,9 +13,11 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { APICore } from "../ApiCore";
 import { baseURL } from "../base";
 import { config } from "../config";
 
+const api = new APICore();
 function Login() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [error, setError] = useState("");
@@ -25,23 +27,23 @@ function Login() {
 
 
 
-    const handleMobileChange = (e) => {
-        const value = e.target.value;
-        const cleaned = value.replace(/\D/g, ""); // \D = non-digit
+  const handleMobileChange = (e) => {
+    const value = e.target.value;
+    const cleaned = value.replace(/\D/g, ""); // \D = non-digit
 
-        // Only update state if length is ≤ 10
-        if (cleaned.length <= 10) {
-          setMobileNumber(cleaned);
-          if (cleaned.length === 10 && validateMobileNumber(cleaned)) {
-            setError("");
-          }
-        }
-      };
+    // Only update state if length is ≤ 10
+    if (cleaned.length <= 10) {
+      setMobileNumber(cleaned);
+      if (cleaned.length === 10 && validateMobileNumber(cleaned)) {
+        setError("");
+      }
+    }
+  };
 
-    const validateMobileNumber = (number) => {
-      const mobileRegex = /^[0-9]{10}$/;
-      return mobileRegex.test(number);
-    };
+  const validateMobileNumber = (number) => {
+    const mobileRegex = /^[0-9]{10}$/;
+    return mobileRegex.test(number);
+  };
 
 
 
@@ -87,6 +89,9 @@ function Login() {
   useEffect(() => {
     // Remove Loader after page loads
     localStorage.removeItem("mobile");
+    api.setLoggedInUser(null);
+    localStorage.removeItem("user_details");
+    delete axios.defaults.headers["Authorization"];
     const loadScreen = document.getElementById("load_screen");
     if (loadScreen) {
       loadScreen.style.display = "none"; // Hide instead of removing (safer)
@@ -160,44 +165,55 @@ function Login() {
 
   // ===================== (Normal Login) ==========================
 
-  
-   const handleSubmit = async (values, { setSubmitting }) => {
+
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      
+
       const response = await axios.post(`${baseURL}${config.login}`, {
         username: values.email,
         password: values.password,
       });
 
       if (response.data.code === 404) {
-         toast.error("User not found");
+        toast.error("User not found");
       }
       if (response.data.code === 401) {
-          console.log("code is :",response.data.code);
-          toast.error("Incorrect Password"); 
+        console.log("code is :", response.data.code);
+        toast.error("Incorrect Password");
       }
 
       if (response.data.code === 201) {
-          const user_details = response?.data?.user_details;
-          localStorage.setItem( "user_details", JSON.stringify(user_details));
-          console.log("user_details is =>",user_details)
+        const userDetails = response?.data?.user_details; // correct path
+        const authorisation = response?.data?.authorisation;
 
-          const userType = user_details?.[0]?.UserType;
-          if (userType === "USER")
-            navigate("/user/dashboard", { replace: true });
-          else if (userType === "ADMIN")
-            navigate("/admin/dashboard", { replace: true });
+        if (!userDetails?.length) {
+          toast.error("No user details found");
+          return;
+        }
+
+        api.setLoggedInUser(userDetails[0], authorisation);
+
+        sessionStorage.setItem("user_details", JSON.stringify(userDetails));
+
+        axios.defaults.headers["Authorization"] = `Bearer ${authorisation.token}`;
+
+        const userType = userDetails[0]?.UserType;
+        if (userType === "USER") {
+          navigate("/user/dashboard", { replace: true });
+        } else if (userType === "ADMIN") {
+          navigate("/admin/dashboard", { replace: true });
+        }
       }
     } catch (error) {
-          if (error.response?.status === 404) {
-            toast.error("User not found"); 
-          } else if (error.response?.status === 401) {
-            toast.error("Incorrect Password");
-          } else {
-            toast.error(`Error is: ${error.message}`);
-          }
-          console.error("Error is ", error.message);
-    } 
+      if (error.response?.status === 404) {
+        toast.error("User not found");
+      } else if (error.response?.status === 401) {
+        toast.error("Incorrect Password");
+      } else {
+        toast.error(`Error is: ${error.message}`);
+      }
+      console.error("Error is ", error.message);
+    }
     finally {
       setSubmitting(false);
     }
@@ -246,29 +262,29 @@ function Login() {
 
     if (enteredOTP === enteredMOB) {
       try {
-          const response = await axios.post(`${baseURL}${config.loginOtp}`, {
-            mobileNumber: mobileNumber,
-          });
+        const response = await axios.post(`${baseURL}${config.loginOtp}`, {
+          mobileNumber: mobileNumber,
+        });
 
-          if ( response.data.status === "Success" && response.data.data.length > 0 ) {
-              let userDetails = response.data.data;
-              //   userDetails.user_details[0].UserType = "franchisee"
-              localStorage.setItem("mobile", mobileNumber);
-              localStorage.setItem("user_details", JSON.stringify(userDetails));
-              console.log("All users saved to localStorage:", userDetails);
+        if (response.data.status === "Success" && response.data.data.length > 0) {
+          let userDetails = response.data.data;
+          //   userDetails.user_details[0].UserType = "franchisee"
+          sessionStorage.setItem("mobile", mobileNumber);
+          sessionStorage.setItem("user_details", JSON.stringify(userDetails));
+          console.log("All users saved to localStorage:", userDetails);
 
-              //     const user = response.data.data[0]; // get the first user object
-              //     const userInfo = {
-              //     UserName: user.UserName,
-              //     UserType: user.UserType,
-              //     EmailId: user.EmailId,
-              //     PANNO: user.PANNO
-              // };
+          //     const user = response.data.data[0]; // get the first user object
+          //     const userInfo = {
+          //     UserName: user.UserName,
+          //     UserType: user.UserType,
+          //     EmailId: user.EmailId,
+          //     PANNO: user.PANNO
+          // };
 
-              navigate("/user/dashboard");
-          } else {
-            toast.error(response.data.message || "Login failed");
-          }
+          navigate("/user/dashboard");
+        } else {
+          toast.error(response.data.message || "Login failed");
+        }
       } catch (err) {
         toast.error("Server error");
       }
@@ -387,7 +403,7 @@ function Login() {
                                 aria-describedby="inputGroupPrepend2"
                               />
                             </div>
-                                <ErrorMessage name="email" component="div" className="text-danger" />
+                            <ErrorMessage name="email" component="div" className="text-danger" />
                           </div>
                         </div>
 
@@ -403,7 +419,7 @@ function Login() {
                                 aria-describedby="inputGroupPrepend2"
                               />
                             </div>
-                              <ErrorMessage name="password" component="div" className="text-danger" />
+                            <ErrorMessage name="password" component="div" className="text-danger" />
                           </div>
                         </div>
 
@@ -440,20 +456,20 @@ function Login() {
                     <div className="col-12">
                       <label className="form-label">Mobile Number</label>
                       <div className="input-group">
-                        <span className="input-group-text" id="inputGroupPrepend2" > 
-                          <i className="fa fa-mobile"></i> 
+                        <span className="input-group-text" id="inputGroupPrepend2" >
+                          <i className="fa fa-mobile"></i>
                         </span>
-                          <input
-                              type="text"
-                              inputMode="numeric"
-                              maxLength={10}
-                              className={`form-control ${error ? "is-invalid" : ""}`}
-                              id="validationDefaultUsername"
-                              aria-describedby="inputGroupPrepend2"
-                              value={mobileNumber}
-                              onChange={handleMobileChange}
-                              required
-                          />
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={10}
+                          className={`form-control ${error ? "is-invalid" : ""}`}
+                          id="validationDefaultUsername"
+                          aria-describedby="inputGroupPrepend2"
+                          value={mobileNumber}
+                          onChange={handleMobileChange}
+                          required
+                        />
                         <button className="btn btn-primary" onClick={onOTPSend}>
                           Send OTP
                         </button>
