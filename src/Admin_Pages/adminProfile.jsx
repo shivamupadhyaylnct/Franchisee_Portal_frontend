@@ -1,19 +1,12 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify';
-<<<<<<< HEAD
-=======
 import { apiPost } from '../apiCommon';
->>>>>>> branch-b
 import { baseURL } from '../base';
 import { config } from '../config';
 
 function adminProfile() {
-<<<<<<< HEAD
-    const user = localStorage.getItem("user_details");
-=======
     const user = sessionStorage.getItem("user_details");
->>>>>>> branch-b
     const userDetails = JSON.parse(user)
     const vendorCodes = userDetails.map(u => u.UserName);
 
@@ -39,11 +32,7 @@ function adminProfile() {
             if (!selectedVendor) return;
 
             try {
-<<<<<<< HEAD
-                const response = await axios.post(`${baseURL}${config.getFranchiseDetails}`, {
-=======
                 const response = await apiPost(config.getFranchiseDetails, {
->>>>>>> branch-b
                     selectedVendorCode: selectedVendor
                 });
 
@@ -188,82 +177,7 @@ function adminProfile() {
                                                         )}
 
 
-                                                        {/* <div className="row">
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="fullName">Name Of Franchisee</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="profession">PAN No</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="address">Address 1</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="address">Address 2</label>
-                                                            <div className="fake-input">hello</div>
-                                                       </div>
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="location">City</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="website1">Postal Code</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="website1">Country</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="phone">Telephone</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="email">Email id </label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>                                    
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="website1">GST No</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="website1">Bank Name</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-4 mb-3">
-                                                        <div className="form-group">
-                                                            <label for="website1">Bank Account No./ IFSC Code</label>
-                                                            <div className="fake-input">hello</div>
-                                                        </div>
-                                                    </div>
-                                                </div> */}
+                                                       
                                                     </div>
                                                 </div>
                                             </div>

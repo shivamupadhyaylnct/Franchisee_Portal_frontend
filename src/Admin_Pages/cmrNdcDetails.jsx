@@ -1,16 +1,9 @@
 import axios from 'axios';
-<<<<<<< HEAD
-import  { useEffect, useState } from 'react'
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-// import { BeatLoader } from 'react-spinners';
-=======
 import { useEffect, useState } from 'react'
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 // import { BeatLoader } from 'react-spinners';
 import { apiPost, apiGet, apiFormDataPost } from '../apiCommon';
->>>>>>> branch-b
 import { baseURL, base } from '../base';
 import { config } from '../config';
 import { useNavigate } from 'react-router-dom';
@@ -19,22 +12,13 @@ import { Button } from '@mui/material';
 
 function cmrNdcDetails() {
 
-<<<<<<< HEAD
-  const [file,setFile]= useState(null); 
-    // console.log("file is : ", file)
-=======
   const [file, setFile] = useState(null);
   // console.log("file is : ", file)
->>>>>>> branch-b
 
   const [storeCodes, setStoreCodes] = useState([])
   const [selectedStoreCode, setSelectedStoreCode] = useState("")
 
-<<<<<<< HEAD
-  const [franchise, setFranchise]= useState([])
-=======
   const [franchise, setFranchise] = useState([])
->>>>>>> branch-b
   const [selectedFranchiseName, setSelectedFranchiseName] = useState("");
 
   const financialYear = ["2022-2023", "2023-2024", "2024-2025", "2025-2026"]
@@ -49,7 +33,6 @@ function cmrNdcDetails() {
 
   const navigate = useNavigate();
   const handleNavClick = (e, value) => {
-<<<<<<< HEAD
       e.preventDefault();
       navigate(value);
   };
@@ -57,7 +40,7 @@ function cmrNdcDetails() {
   useEffect(()=>{
     const fetchAllFranchise = async()=>{
      try {
-      const res = await axios.get(`${baseURL}${config.getAllFranchiseDetails}`)
+      const res = await apiGet(config.getAllFranchiseDetails)
       setFranchise(res.data)
      } catch (error) {
       toast.error("Error Fetching Franchisee Details.");
@@ -90,43 +73,7 @@ function cmrNdcDetails() {
 //==========================================
 
   async function getStoreCodes() {
-    const response = await axios.post(`${baseURL}${config.getallstoredetails}`, {
-=======
-    e.preventDefault();
-    navigate(value);
-  };
-  //===============================================
-  useEffect(() => {
-    const fetchAllFranchise = async () => {
-      try {
-        const res = await apiGet(config.getAllFranchiseDetails);
-        setFranchise(res.data)
-      } catch (error) {
-        toast.error("Error Fetching Franchisee Details.");
-        console.log("Error Fetching Details", error.message)
-      }
-    }
-    fetchAllFranchise();
-  }, [])
-
-  useEffect(() => {
-    (async () => {
-      const newData = await getStoreCodes();
-      console.log("Fetched StoreCodes response:", newData);
-
-      if (newData?.ALL_STORE) {
-        setStoreCodes(newData.ALL_STORE);
-        setSelectedStoreCode(newData.ALL_STORE[0].LEGACY_CODE);
-      } else {
-        setSelectedStoreCode(""); // fallback
-      }
-    })();
-  }, [selectedFranchiseName])
-  //==========================================
-
-  async function getStoreCodes() {
     const response = await apiPost(config.getallstoredetails, {
->>>>>>> branch-b
       storeUID: selectedFranchiseName
     });
     try {
@@ -157,52 +104,12 @@ function cmrNdcDetails() {
 
 
   const handleSubmit = async () => {
-<<<<<<< HEAD
       console.groupCollapsed()
-      console.log("1 name",selectedFranchiseName)
-      console.log("year",selectedFinancialYear)
-      console.log("quarter",selectedFinancialQuarter)
-      console.log("store",selectedStoreCode)
+        console.log("1 name",selectedFranchiseName)
+        console.log("year",selectedFinancialYear)
+        console.log("quarter",selectedFinancialQuarter)
+        console.log("store",selectedStoreCode)
       console.groupEnd()
-
-    try {
-      if (!selectedFranchiseName || !selectedStoreCode || !selectedFinancialYear || !selectedFinancialQuarter || !file) {
-          if (!selectedFranchiseName) {
-           toast.warning("Please provide Franchise Name");
-          } else if (!selectedStoreCode) {
-           toast.warning("Please provide Store Code");
-          } else if (!selectedFinancialYear) {
-           toast.warning("Please provide Financial Year");
-          } else if (!selectedFinancialQuarter) {
-           toast.warning("Please provide Financial Quarter");
-          } else if (!file){
-            toast.warning("Select a file");
-          }
-          return;
-     }
-      else {
-        const formData = new FormData();
-        formData.append('file',file)
-        formData.append('storecode',selectedStoreCode.replace(/^0+/, ''))
-        formData.append('quarter',selectedFinancialQuarter)
-        formData.append('year',selectedFinancialYear)
-        // console.log("form data is : ",formData)
-        
-        const response = await axios.post(`${baseURL}${config.uploadcmrndcfile}`, formData);
-        
-       if (response?.data?.file_name) {
-          toast.success(`File - "${response.data.file_name}" uploaded successfully`);
-          // reset
-            setFile(null);
-            setSelectedFranchiseName(""); 
-            setSelectedStoreCode("");
-            setSelectedFinancialYear("");
-            setSelectedFinancialQuarter("");
-=======
-    console.log("1 name", selectedFranchiseName)
-    console.log("year", selectedFinancialYear)
-    console.log("quarter", selectedFinancialQuarter)
-    console.log("store", selectedStoreCode)
 
     try {
       if (!selectedFranchiseName || !selectedStoreCode || !selectedFinancialYear || !selectedFinancialQuarter || !file) {
@@ -237,21 +144,14 @@ function cmrNdcDetails() {
           setSelectedStoreCode("");
           setSelectedFinancialYear("");
           setSelectedFinancialQuarter("");
->>>>>>> branch-b
 
         } else {
           toast.error("File not uploaded");
         }
       }
-<<<<<<< HEAD
-      
-    } catch (error) {
-      console.error("file Upload failed : ",error.message);
-=======
 
     } catch (error) {
       console.error("file Upload failed : ", error.message);
->>>>>>> branch-b
       toast.error('file Upload failed');
     }
   };
@@ -259,130 +159,12 @@ function cmrNdcDetails() {
 
   return (
     <>
-<<<<<<< HEAD
-            {/* <!--  BEGIN CONTENT AREA  --> */}
-=======
       {/* <!--  BEGIN CONTENT AREA  --> */}
->>>>>>> branch-b
       <div id="content" className="main-content">
         <div className="layout-px-spacing1">
 
           <div className="middle-content container-xxl p-0">
             <div id="tabsSimple" className="col-xl-12 col-12 layout-spacing mt-3">
-<<<<<<< HEAD
-              
-              <div className="statbox widget">
-      
-                  {/* ================= (Back and addUser Button) ================== */}
-
-                    <div className="box box-shadow d-flex align-items-center justify-content-between ">
-                        <h5 className="p-3" >CMR NDC Details</h5>
-                        <div className="d-flex gap-2 m-3">
-                            <a href="/admin/dashboard"
-                                className="btn btn-primary"
-                                onClick={(e) => handleNavClick(e, "/admin/dashboard")}>
-                                <i className="fa fa-arrow-left me-2"></i> Back
-                            </a>
-                        </div>
-                    </div>
-                
-                    {/* ======================================= */}
-                    <div className="widget-content widget-content-area pt-0">
-                     <div className="tab-content" id="pills-tabContent">
-                      <div id="pills-profile-icon" role="tabpanel" aria-labelledby="pills-profile-icon-tab" tabindex="0">
-                        <div className="row p-3">
-                          <div className="form border rounded p-3" style={{ border: "2px solid black" }}>
-                            <div className="row">
-
-                              <div className="col-md-4 mb-3">
-                                <div className="form-group">
-                                  <label htmlFor="fullName">Franchise Name </label>
-
-                                  <select name="selectedFranchiseName" id="country" className="form-select" value={selectedFranchiseName}
-                                    onChange={handleChange}>
-                                    <option value="" disabled>Select Franchise Name</option>
-                                    {franchise.map((item) => (
-                                      <option key={item.franchiseeUID} value={item.franchiseeName}>{item.franchiseeName}</option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </div>
-
-                              <div className="col-md-4 mb-3">
-                                <div className="form-group">
-                                  <label htmlFor="address">Store Code</label>
-                                  <select name="selectedStoreCode"
-                                    id="country" className="form-select"
-                                    value={selectedStoreCode}
-                                    onChange={handleChange}
-                                  >
-                                    <option value="" disabled>
-                                      Select Store Code
-                                    </option>
-                                    
-                                    {
-                                      storeCodes.map((option) => (
-                                        <option key={option.LEGACY_CODE}
-                                          value={option.LEGACY_CODE}>
-                                          {option.LEGACY_CODE.replace(/^0+/, '')}
-                                        </option>
-                                      ))
-                                    }
-                                  </select>
-                                </div>
-                              </div>
-
-                              <div className="col-md-4 mb-3">
-                                <div className="form-group">
-                                  <label htmlFor="location">Financial Year</label>
-                                  <select name="selectedFinancialYear" id="country" className="form-select" value={selectedFinancialYear}
-                                    onChange={handleChange}>
-                                    <option value="" disabled>All..</option>
-                                    {financialYear.map((option) => (
-                                      <option key={option} value={option}>{option}</option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </div>
-
-                              <div className="col-md-4 mb-3">
-                                <div className="form-group">
-                                  <label htmlFor="location">Financial Quarter</label>
-                                  <select name="selectedFinancialQuarter" id="country" className="form-select" value={selectedFinancialQuarter}
-                                    onChange={handleChange}>
-                                    <option value="" disabled>ALL..</option>
-                                    {financialQuarter.map((option) => (
-                                      <option key={option} value={option}>{option}</option>
-                                    ))}
-                                  </select>
-                                </div>
-                              </div>
-
-                               <div className="col-md-6 mt-2 mb-3">
-                                <div className="form-group">
-                                  <label htmlFor="location">Choose file </label> <br/>
-                                  <label htmlFor="file-upload" style={{ cursor: 'pointer' }}>
-                                      <Button variant="contained" component="span"> 
-                                        Choose File 
-                                      </Button>
-                                    </label>
-                                    <input
-                                      id="file-upload"
-                                      type="file"
-                                      style={{ display: 'none' }}
-                                      onChange={handleFileChange}
-                                    />
-                                    <spane> <b>{file ? file.name : ''}</b></spane>
-                                </div>
-                              </div>
-
-                              <div className="col-md-2 mt-5 mb-3">
-                                <div className="form-group text-end">
-                                  <Button onClick={handleSubmit} variant="contained" color="primary" style={{ marginLeft: '1rem' }}>
-                                      Submit File
-                                    </Button>
-                                </div>
-=======
 
               <div className="statbox widget">
 
@@ -494,21 +276,14 @@ function cmrNdcDetails() {
                                 <Button onClick={handleSubmit} variant="contained" color="primary" style={{ marginLeft: '1rem' }}>
                                   Submit File
                                 </Button>
->>>>>>> branch-b
                               </div>
                             </div>
                           </div>
                         </div>
-<<<<<<< HEAD
-                        {/* ======================================= */}
-
-                        {/* {
-=======
                       </div>
                       {/* ======================================= */}
 
                       {/* {
->>>>>>> branch-b
                           ndcDetails.length > 0 ? (
                             <>
                               {loading ? (
@@ -558,17 +333,10 @@ function cmrNdcDetails() {
                           ) : (null)
                         } */}
 
-<<<<<<< HEAD
-                        {/* ======================================= */}
-                      </div>
-                      {/* ======================================= */}
-                    </div>
-=======
                       {/* ======================================= */}
                     </div>
                     {/* ======================================= */}
                   </div>
->>>>>>> branch-b
                 </div>
                 {/* ==================================== */}
               </div>

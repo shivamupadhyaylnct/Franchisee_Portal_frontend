@@ -5,30 +5,13 @@ import style3 from '../../src/assets/img/contact.jpg';
 import style4 from '../../src/assets/img/franchise.jpg';
 import style5 from '../../src/assets/img/CMR_NDC_Details.jpg'
 import style6 from '../../src/assets/img/grid-blog-style-8.jpg'
-<<<<<<< HEAD
-=======
 import style7 from '../../src/assets/img/commission.jpg'
->>>>>>> branch-b
 import { Link } from 'react-router-dom';
 
 
 
 function adminDashboard() {
 
-<<<<<<< HEAD
-  return (
-     <>
-             {/* <!--  BEGIN CONTENT AREA  --> */}
-        <div id="content" className="main-content">
-            <div className="layout-px-spacing1">
-
-                <div className="middle-content container-xxl p-0">
-                    <div className="card mt-3">
-                        <div className="card-body p-3">
-                          
-                            <div className="row mb-2">
-                                <h5>Admin</h5> 
-=======
     return (
         <>
             {/* <!--  BEGIN CONTENT AREA  --> */}
@@ -41,7 +24,6 @@ function adminDashboard() {
 
                                 <div className="row mb-2">
                                     <h5>Admin</h5>
->>>>>>> branch-b
 
                                     <div className="col-lg-3 mb-3">
                                         <Link to="/admin/user" className="card" >
@@ -61,13 +43,8 @@ function adminDashboard() {
                                             </div>
                                         </Link>
                                     </div>
-<<<<<<< HEAD
-                                    
- 
-=======
 
 
->>>>>>> branch-b
                                     <div className="col-lg-3 mb-3">
                                         <Link to="/admin/alert" className="card" >
                                             <img src={style2} className="card-img-top" alt="..." />
@@ -125,11 +102,7 @@ function adminDashboard() {
                                         </Link>
                                     </div>
 
-<<<<<<< HEAD
-                                      <div className="col-lg-3 mb-3">
-=======
                                     <div className="col-lg-3 mb-3">
->>>>>>> branch-b
                                         <Link to="/admin/cmr_ndc_details" className="card">
                                             <img src={style5} className="card-img-top" alt="..." />
                                             <div className="card-footer p-3">
@@ -149,11 +122,7 @@ function adminDashboard() {
                                     </div>
 
 
-<<<<<<< HEAD
-                                     <div className="col-lg-3 mb-3">
-=======
                                     <div className="col-lg-3 mb-3">
->>>>>>> branch-b
                                         <Link to="/admin/adminKnowledgeCenter" className="card">
                                             <img src={style6} className="card-img-top" alt="..." />
                                             <div className="card-footer">
@@ -172,8 +141,6 @@ function adminDashboard() {
                                         </Link>
                                     </div>
 
-<<<<<<< HEAD
-=======
 
                                     <div className="col-lg-3 mb-3">
                                         <Link to="/admin/adminCommission" className="card">
@@ -194,28 +161,14 @@ function adminDashboard() {
                                         </Link>
                                     </div>
                                 </div>
->>>>>>> branch-b
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-<<<<<<< HEAD
-        </div>
-        {/* <!--  END CONTENT AREA  --> */}
-     </>
-    // <>
-    // <h1>Dashboard called</h1>
-    // </>
-  )
-=======
             {/* <!--  END CONTENT AREA  --> */}
         </>
-        // <>
-        // <h1>Dashboard called</h1>
-        // </>
     )
->>>>>>> branch-b
 }
 
 export default adminDashboard
