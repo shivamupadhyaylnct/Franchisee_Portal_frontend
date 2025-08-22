@@ -108,8 +108,9 @@ function Header() {
                                         <span>Profile</span>
                                     </Link>
                                 </div>
+
                                 <div className="dropdown-item">
-                                    <Link to="/admin/changePassword" style={{ cursor: "pointer" }}>
+                                    <Link to="/user/changePassword" style={{ cursor: "pointer" }}>
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             width="32"
                                             height="32"
@@ -120,9 +121,10 @@ function Header() {
                                         <span>Change Password</span>
                                     </Link>
                                 </div>
+
                                 <div className="col-auto text-end">
                                     <button
-                                        className="btn btn-secondary _effect--ripple waves-effect waves-light d-flex align-items-center gap-2 px-3"
+                                        className="btn btn-secondary _effect--ripple waves-effect waves-light d-flex align-items-center gap-2 mt-2 mx-3"
                                         onClick={() => {
                                             api.setLoggedInUser(null);
                                             localStorage.removeItem("user_details");
@@ -144,6 +146,7 @@ function Header() {
                                         <span>Log Out</span>
                                     </button>
                                 </div>
+
                             </div>
 
                         </li>

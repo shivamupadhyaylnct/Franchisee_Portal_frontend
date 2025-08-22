@@ -76,6 +76,7 @@ function Store() {
         const response = await apiPost(config.getallstoredetails, { storeUID: selectedVendor });
         try {
             if (response.data.code === 201) {
+                // console.log("store details are",response.data.all_store_details);
                 return response.data.all_store_details;
             }
         } catch (error) {
@@ -95,7 +96,7 @@ function Store() {
             } else if (response.data.code === 401) {
                 toast.error("Incorrect Password");
             } else if (response.data.code === 201) {
-                // console.log(response.data)
+                console.log("Store details are",response.data.store_details)
                 setStoreDetails(response.data.store_details)
             }
 
@@ -205,9 +206,7 @@ function Store() {
 
                                                                                     <div className="invoice-container">
                                                                                         <div className="invoice-inbox">
-
                                                                                             <div id="ct" className="">
-
                                                                                                 <div className="invoice-00001">
                                                                                                     <div className="content-section">
 
@@ -218,11 +217,19 @@ function Store() {
                                                                                                                         <img className="company-logo" src={logo} alt="company" />
                                                                                                                         <h3 className="in-heading align-self-center"></h3>
                                                                                                                     </div>
-                                                                                                                    {/* {console.log("Details are = ",storeDetails.WA_FRNCHSE )} */}
                                                                                                                     <p className="inv-street-addr mt-3">{storeDetails?.STORE?.NAME}</p>
                                                                                                                     <p className="inv-email-address">{storeDetails?.STORE?.SMTP_ADDR}</p>
                                                                                                                     <p className="inv-email-address">{storeDetails?.STORE?.HOUSE_NUM1}</p>
                                                                                                                     <p className="inv-email-address">{storeDetails?.STORE?.TEL_NUMBER}</p>
+                                                                                                                    <p className="inv-email-address"><span className="inv-title">Brand : </span>{storeDetails?.STORE?.CHN_CODE}</p>
+                                                                                                                    <p className="inv-email-address"><span className="inv-title">Sub Brand : </span> {storeDetails?.STORE?.SPART}</p>
+                                                                                                                    <p className="inv-email-address">
+                                                                                                                        <span className="inv-title">Status : </span>
+                                                                                                                        <span style={{color:"green"}}> 
+                                                                                                                            <i className="fas fa-circle" style={{ fontSize: "15px", marginRight: "5px" }}></i>
+                                                                                                                            Active
+                                                                                                                        </span>
+                                                                                                                    </p> 
                                                                                                                 </div>
 
                                                                                                                 <div className="col-sm-6 text-sm-end">
@@ -231,29 +238,29 @@ function Store() {
                                                                                                                     <p className="inv-due-date"><span className="inv-title">Start Date : </span> <span className="inv-date">{formatSapDate(storeDetails?.STORE?.STR_OPN_DATE)}</span></p>
                                                                                                                 </div>
                                                                                                             </div>
-
                                                                                                         </div>
 
                                                                                                         <div className="inv--detail-section inv--customer-detail-section px-2 py-2">
+                                                                                                            <div className="row ">
 
-                                                                                                            <div className="row">
-
-                                                                                                                <div className="col-xl-8 col-lg-7 col-md-6 col-sm-4 align-self-center">
-                                                                                                                    <h6 className="inv-title">Address</h6>
-                                                                                                                </div>
-
-                                                                                                                {/* <div className="col-xl-4 col-lg-5 col-md-6 col-sm-8 align-self-center order-sm-0 order-1 text-sm-end mt-sm-0 mt-5">
-                                                                                                                    <h6 className="inv-title">Address</h6>
+                                                                                                                {/* <div className="col border-end">
+                                                                                                                    <div className="col-xl-8 col-lg-7 col-md-6 col-sm-4 align-self-center">
+                                                                                                                        <h6 className="inv-title">Address</h6>
+                                                                                                                    </div>
+                                                                                                                    <div className="col-xl-8 col-lg-7 col-md-6 col-sm-4">
+                                                                                                                        <div className="inv-details">
+                                                                                                                            <p className="inv-email-address">{storeDetails?.STORE?.STREET}</p>
+                                                                                                                            <p className="inv-email-address">{storeDetails?.STORE?.CITY1}</p>
+                                                                                                                            <p className="inv-email-address">{storeDetails?.STORE?.BEZEI}</p>
+                                                                                                                            <p className="inv-email-address">{storeDetails?.STORE?.LANDX}</p>
+                                                                                                                            <p className="inv-email-address">{storeDetails?.STORE?.POST_CODE1}</p>
+                                                                                                                        </div>
+                                                                                                                    </div>
                                                                                                                 </div> */}
 
-                                                                                                                <div className="col-xl-8 col-lg-7 col-md-6 col-sm-4">
+                                                                                                                 <div className="col border-end">
+                                                                                                                    <h6 className="inv-title" style={{textDecoration:"underline"}}>Address</h6>
                                                                                                                     <div className="inv-details">
-                                                                                                                        {/* <p><span className="label"><b>PAN No.:</b></span> <span className="value">{storeDetails?.WA_FRNCHSE?.J_1IPANNO}</span></p>
-                                                                                                                        <p><span className="label"><b>GST No.:</b></span> <span className="value">{storeDetails?.WA_FRNCHSE?.SERVICETAX}</span></p>
-                                                                                                                        <p><span className="label"><b>Bank Name:</b></span> <span className="value">{storeDetails?.WA_FRNCHSE?.BANKA}</span></p>
-                                                                                                                        <p><span className="label"><b>Bank Account No:</b></span> <span className="value">{storeDetails?.WA_FRNCHSE?.BANKN} </span></p>
-                                                                                                                        <p><span className="label mb-3"><b>IFSC Code:</b></span> <span className="value mb-3"> {storeDetails?.WA_FRNCHSE?.IFSC}</span></p> */}
-
                                                                                                                         <p className="inv-email-address">{storeDetails?.STORE?.STREET}</p>
                                                                                                                         <p className="inv-email-address">{storeDetails?.STORE?.CITY1}</p>
                                                                                                                         <p className="inv-email-address">{storeDetails?.STORE?.BEZEI}</p>
@@ -261,38 +268,31 @@ function Store() {
                                                                                                                         <p className="inv-email-address">{storeDetails?.STORE?.POST_CODE1}</p>
                                                                                                                     </div>
                                                                                                                 </div>
-
-                                                                                                                {/* <div className="col-xl-4 col-lg-5 col-md-6 col-sm-8 col-12 order-sm-0 order-1 text-sm-end">
-                                                                                                                    <p className="inv-customer-name">King style</p>
-                                                                                                                    <p className="inv-street-addr">{storeDetails?.WA_FRNCHSE?.STREET}</p>
-                                                                                                                    <p className="inv-street-addr">{storeDetails?.WA_FRNCHSE?.CITY1}</p>
-                                                                                                                    <p className="inv-street-addr">{storeDetails?.WA_FRNCHSE?.BEZEI}</p>
-                                                                                                                    <p className="inv-email-address">{storeDetails?.WA_FRNCHSE?.LANDX}</p>
-                                                                                                                    <p className="inv-email-address">{storeDetails?.WA_FRNCHSE?.POST_CODE1}</p>
-                                                                                                                </div> */}
-
+                                                                                                                <div className="col border-end">
+                                                                                                                    <h6 className="inv-title" style={{textDecoration:"underline"}} >ARM Details</h6>
+                                                                                                                    <div className="inv-details">
+                                                                                                                        <p className="inv-email-address">{storeDetails?.STORE?.ARM}</p>
+                                                                                                                        <p className="inv-email-address">{storeDetails?.STORE?.ABM_EMAIL_ID}</p>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                <div className="col border-end">
+                                                                                                                    <h6 className="inv-title" style={{textDecoration:"underline"}} >RM Details</h6>
+                                                                                                                    <div className="inv-details">
+                                                                                                                        <p className="inv-email-address">{storeDetails?.STORE?.RM}</p>
+                                                                                                                        <p className="inv-email-address">{storeDetails?.STORE?.RM_EMAIL_ID}</p>
+                                                                                                                    </div>
+                                                                                                                </div>
                                                                                                             </div>
-
                                                                                                         </div>
-
 
                                                                                                     </div>
                                                                                                 </div>
-
                                                                                             </div>
-
-
                                                                                         </div>
-
                                                                                     </div>
-
                                                                                 </div>
-
-
                                                                             </div>
-
                                                                         </div>
-
                                                                     </div>
                                                                 </div>
                                                             </div>

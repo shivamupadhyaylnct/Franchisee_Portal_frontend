@@ -86,9 +86,9 @@ const Sidebar = () => {
                                 <li className={`${location.pathname === "/user/statements/tdsCertificates" ? "active" : ""}`}>
                                     <Link to="/user/statements/tdsCertificates"> TDS Certificates</Link>
                                 </li>
-                                {/*<li className={`${location.pathname === "/user/statements/securitydeposit" ? "active" : ""}`}>
+                                <li className={`${location.pathname === "/user/statements/securitydeposit" ? "active" : ""}`}>
                                     <Link to="/user/statements/securitydeposit"> Security Deposit</Link>
-                                </li>*/}
+                                </li>
 
 
 

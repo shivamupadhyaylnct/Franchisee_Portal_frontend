@@ -80,6 +80,7 @@ function App() {
                      <Route path='/user/statements/tdsCertificates' element={< TdsCertificates />} />
                      <Route path='/user/statements/securitydeposit' element={< SecurityDeposit />} />
                      <Route path='/user/agreements' element={<Agreements />} />
+                     <Route path='/user/changePassword' element={<ChangePassword/>} />
                      <Route path='/user/support' element={<Support />} />
                      <Route path='/user/profile' element={<Profile />} />
                      <Route path='/user/knowledgecenter' element={<KnowledgeCenter />} />

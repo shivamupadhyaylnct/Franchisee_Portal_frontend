@@ -1,5 +1,5 @@
-import React from "react";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+
+import { Navigate, Outlet } from "react-router-dom";
 import { getAuthorization, getUserType } from "./ApiCore";
 
 const ProtectedRoute = ({ allowedRoles }) => {

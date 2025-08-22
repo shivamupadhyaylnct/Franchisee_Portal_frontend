@@ -39,6 +39,7 @@ export const config = {
     login: 'user/login/',
     getstoredetails: 'user/getstoredetails/',
     getcommissiondetails: 'user/getcommissiondetails/',
+    getSecurityDeposit: 'user/getSecurity-deposit/',
     getcreditdebit: 'user/getcreditdebit/',
     getledgerdetails: 'user/getledgerdetails/',
     getallTdsDetails: 'user/getallTdsDetails/',

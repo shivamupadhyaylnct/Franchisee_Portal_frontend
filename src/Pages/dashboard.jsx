@@ -25,22 +25,22 @@ function Dashboard() {
                         "Generic Message Alert"
                     ]
                 });
-            console.log("API Response:", response.data);
+            // console.log("API Response:", response.data);
 
             if (response.data.code === 200 && response.data.status === 'Success') {
                 let validAlerts = response.data.data.filter(alert => alert.isExpire === 1);
-                console.log("Valid Alerts:", validAlerts);
+                // console.log("Valid Alerts:", validAlerts);
                 const genericAlerts = validAlerts.filter(a => a.alertName === "Generic Message Alert");
                 if (genericAlerts.length > 0) {
                     const latestGeneric = genericAlerts[0]; // API already sorts by createdAt
-                    console.log("Latest Generic Alert:", latestGeneric);
+                    // console.log("Latest Generic Alert:", latestGeneric);
                     validAlerts = validAlerts.filter(a => a.alertName !== "Generic Message Alert");
-                     console.log("hgfhg",latestGeneric.isVisible);
+                    //  console.log("hgfhg",latestGeneric.isVisible);
                     if (latestGeneric.isVisible === true){
                         validAlerts.push(latestGeneric);
                     }
                 }
-                console.log("Final Alerts:", validAlerts);
+                // console.log("Final Alerts:", validAlerts);
                 setAlerts([...validAlerts]); // Ensure new array for re-render
 
                 // fetching one time Welcome StockBlock Alert

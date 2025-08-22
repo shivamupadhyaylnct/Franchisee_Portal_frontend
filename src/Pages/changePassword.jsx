@@ -36,7 +36,6 @@ function changePassword() {
         if (!email)
             return toast.error("Email is Required");
 
-
         try {
             const response = await apiPost(config.resetPassword, {
                 email,

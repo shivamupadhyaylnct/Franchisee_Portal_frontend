@@ -19,6 +19,7 @@ function forgotPassword() {
   const [step, setStep] = useState(1); // step1 = email, 2 = OTP, 3 = reset
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
+  const [vendorCode, setVendorCode] = useState("");
   const [timer, setTimer] = useState(120); //hardcoded 2 min
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +44,7 @@ function forgotPassword() {
   const handleSendOtp = async () => {
     if (!email)
       return toast.error("Email is required");
-    console.log(email)
+    // console.log(email)
     try {
       setIsLoading(true);
       const response = await apiPost(config.sendOtpToEmail, { email });
@@ -75,7 +76,7 @@ function forgotPassword() {
       }
     } catch (err) {
       toast.error("OTP verification failed");
-      console.log(`OTP verification failed: ${err}`)
+      console.log(`OTP verification failed: ${err.ErrorMessage}`)
     } finally {
       setIsLoading(false);
     }
@@ -94,6 +95,7 @@ function forgotPassword() {
       const response = await apiPost(config.resetPassword, {
         email,
         newPassword,
+        vendorCode,
       });
 
       if (response.data.code === 200) {
@@ -146,14 +148,6 @@ function forgotPassword() {
   };
   return (
     <div className="form">
-      {/* <div id="load_screen">
-      <div className="loader">
-        <div className="loader-content">
-          <div className="spinner-grow align-self-center"></div>
-        </div>
-      </div>
-    </div> */}
-
       <div className="auth-container d-flex">
         <div className="container mx-auto align-self-center">
           <div className="row">
@@ -178,18 +172,10 @@ function forgotPassword() {
                         />
                       </div>
                       <div className="carousel-item">
-                        <img
-                          src={cover1}
-                          className="rounded shadow"
-                          alt="auth-img-2"
-                        />
+                        <img src={cover1} className="rounded shadow" alt="auth-img-2" />
                       </div>
                       <div className="carousel-item">
-                        <img
-                          src={cover2}
-                          className="rounded shadow"
-                          alt="auth-img-3"
-                        />
+                        <img src={cover2} className="rounded shadow" alt="auth-img-3" />
                       </div>
                     </div>
                     <button
@@ -229,12 +215,7 @@ function forgotPassword() {
                 <div className="card-body">
                   <div className="col-md-12 mb-3">
                     <center>
-                      <img
-                        src={logo}
-                        className="rounded border"
-                        width="100px"
-                        alt="logo"
-                      />
+                      <img src={logo} className="rounded border" width="100px" alt="logo" />
                     </center>
                   </div>
 
@@ -243,9 +224,7 @@ function forgotPassword() {
                     <>
                       <div className="col-md-12">
                         <div className="mb-3">
-                          <label className="form-label">
-                            Email Verification
-                          </label>
+                          <label className="form-label"> Email Verification </label>
                           <div className="input-group">
                             <span className="input-group-text" id="inputGroupPrepend2" >
                               <i className="fa fa-envelope"></i>
@@ -258,6 +237,25 @@ function forgotPassword() {
                               aria-describedby="inputGroupPrepend2"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="col-md-12">
+                        <div className="mb-3">
+                          <div className="input-group">
+                            <span className="input-group-text" id="inputGroupPrepend2" >
+                              <i class="fa-solid fa-id-card"></i>
+                            </span>
+                            <input
+                              type="number"
+                              placeholder="Enter your Vendor Code"
+                              name="vendorCode"
+                              className="form-control"
+                              aria-describedby="inputGroupPrepend2"
+                              value={vendorCode}
+                              onChange={(e) => setVendorCode(e.target.value)}
                             />
                           </div>
                         </div>
