@@ -60,7 +60,7 @@ function SecurityDeposit() {
     
         const [fromDate, setFromDate] = useState(null);
         const [toDate, setToDate] = useState(null);
-        const [commissionDetails, setCommissionDetails] = useState([]);
+        const [securityDepositDetails, setSecurityDepositDetails] = useState([]);
         const [loading, setLoading] = useState(false);
     
         const [vendorCodeWithName, setVendorCodeWithName] = useState([]);
@@ -81,99 +81,99 @@ function SecurityDeposit() {
     
         const columns = [
             {
-                label: 'Month',
-                dataField: 'displayMonth',
-                width: 150,
+                label: 'Vendor Code',
+                dataField: 'LIFNR',
+                width: 100,
             },
             {
                 label: 'SAP Store Code',
-                dataField: 'Sap_Store_Code',
+                dataField: 'ZUONR',
+                dataType: 'string',
+                width: 100,
+            },
+            {
+                label: 'Posting Date',
+                dataField: 'BUDAT',
                 dataType: 'string',
                 width: 150,
             },
             {
-                label: 'Vendor',
-                dataField: 'Vendor',
+                label: 'Currency',
+                dataField: 'RFCCUR',
                 dataType: 'string',
                 width: 150,
             },
             {
-                label: 'Store Code',
-                dataField: 'Legacy',
-                dataType: 'string',
-                width: 150,
-            },
-            {
-                label: 'Bill Quantity (pieces)',
-                dataField: 'Bill_Qty',
+                label: 'Net Due Date',
+                dataField: 'NET_DUE_DATE',
                 dataType: 'number',
                 width: 150,
             },
             {
-                label: 'MRP (Rs.)',
-                dataField: 'MRP',
+                label: 'Amount',
+                dataField: 'DMBTR',
                 width: 150,
             },
             {
-                label: 'Discount (Rs.)',
-                dataField: 'Discount',
+                label: 'Document No',
+                dataField: 'BELNR',
                 width: 150,
             },
             {
-                label: 'GST (Rs.)',
-                dataField: 'GST',
+                label: 'Security Deposit Type',
+                dataField: 'UMSKZ',
                 width: 150,
             },
-            {
-                label: 'Net Sales Value (Rs.)',
-                dataField: 'NSV',
-                width: 150,
-            },
-            {
-                label: 'Franchise Commission Rate (%)',
-                dataField: 'Commission_Rate',
-                width: 150,
-            },
-            {
-                label: 'Franchise Commission Amount (Rs.)',
-                dataField: 'Comm_Amt',
-                width: 150,
-            },
-            {
-                label: 'Taxable Base Amount (Rs.)',
-                dataField: 'Tax_Base_Amt',
-                width: 150,
-            },
-            {
-                label: 'TDS Rate (%)',
-                dataField: 'TDS_Rate',
-                width: 150,
-            },
-            {
-                label: 'TDS Amount (Rs.)',
-                dataField: 'TDS_Amount',
-                width: 150,
-            },
-            {
-                label: 'Net Commission Payable (Rs.)',
-                dataField: 'Net_Commission_Pay',
-                width: 150,
-            },
-            {
-                label: 'CGST-9% on Taxable Base Amount (Rs.)',
-                dataField: 'CGST_Amount',
-                width: 150,
-            },
-            {
-                label: 'SGST-9% on Taxable Base Amount (Rs.)',
-                dataField: 'SGST_Amount',
-                width: 150,
-            },
-            {
-                label: 'Invoice to be raised (Taxable Base Amount + CGST + SGST)',
-                dataField: 'Invoice_Amount',
-                width: 150,
-            },
+            // {
+            //     label: 'Net Sales Value (Rs.)',
+            //     dataField: 'NSV',
+            //     width: 150,
+            // },
+            // {
+            //     label: 'Franchise Commission Rate (%)',
+            //     dataField: 'Commission_Rate',
+            //     width: 150,
+            // },
+            // {
+            //     label: 'Franchise Commission Amount (Rs.)',
+            //     dataField: 'Comm_Amt',
+            //     width: 150,
+            // },
+            // {
+            //     label: 'Taxable Base Amount (Rs.)',
+            //     dataField: 'Tax_Base_Amt',
+            //     width: 150,
+            // },
+            // {
+            //     label: 'TDS Rate (%)',
+            //     dataField: 'TDS_Rate',
+            //     width: 150,
+            // },
+            // {
+            //     label: 'TDS Amount (Rs.)',
+            //     dataField: 'TDS_Amount',
+            //     width: 150,
+            // },
+            // {
+            //     label: 'Net Commission Payable (Rs.)',
+            //     dataField: 'Net_Commission_Pay',
+            //     width: 150,
+            // },
+            // {
+            //     label: 'CGST-9% on Taxable Base Amount (Rs.)',
+            //     dataField: 'CGST_Amount',
+            //     width: 150,
+            // },
+            // {
+            //     label: 'SGST-9% on Taxable Base Amount (Rs.)',
+            //     dataField: 'SGST_Amount',
+            //     width: 150,
+            // },
+            // {
+            //     label: 'Invoice to be raised (Taxable Base Amount + CGST + SGST)',
+            //     dataField: 'Invoice_Amount',
+            //     width: 150,
+            // },
         ];
     
         //========================================== start ================================================
@@ -239,10 +239,15 @@ function SecurityDeposit() {
     
     
         const handleSubmit = async () => {
+            const vendorCodeArr = userDetails.map(u => u.UserName);
+            let vendorCode = vendorCodeArr[0].padStart(vendorCodeArr[0].length + 3, '0');
+            
             console.groupCollapsed("payload Details are below")
-            console.log("Commission", selectedSecurityDeposit)
+            console.log("Security deposite type", selectedSecurityDeposit)
+            console.log("vendor Code", vendorCode);
             console.log("selectedStoreCode", selectedStoreCode)
-            console.log(`from ${fromDate} to date ${toDate}`)
+            console.log(`from date is  ${fromDate}`)
+            console.log(`To date is ${toDate}`)
             console.groupEnd()
             try {
                 if (selectedSecurityDeposit == "") {
@@ -251,8 +256,8 @@ function SecurityDeposit() {
                 } else if (selectedStoreCode == "") {
                     toast.error("Provide Store Code");
                     return;
-                }else if (selectedStoreCode == "") {
-                    toast.error("Provide Store Code");
+                }else if (vendorCode == "") {
+                    toast.error("vendor code doseent fetched");
                     return;
                 } else if (fromDate == "" || fromDate == null) {
                     toast.error("Provide From Date");
@@ -262,57 +267,53 @@ function SecurityDeposit() {
                     return;
                 }
                 else {
-    
+                    
                     let storeCodeValues = []
                     if (selectedStoreCode == "All") {
-                        storeCodes.forEach((item) => {
-                            storeCodeValues.push(item.LEGACY_CODE)
-                        })
+                        storeCodes.forEach((item) => { storeCodeValues.push(item.LEGACY_CODE) })
                     } else {
                         storeCodeValues.push(selectedStoreCode)
                     }
-    
                     let data = {
                         securityDepositType: selectedSecurityDeposit,
+                        vendorCode:vendorCode,
                         storeCode: storeCodeValues,
                         fromDate: fromDate ? formatFromandToDates(fromDate) : "",
                         toDate: toDate ? formatFromandToDates(toDate) : "",
                     }
                     setLoading(true);
-                    const response = await apiPost(config.getcommissiondetails, data);
+
+                    const response = await apiPost(config.getSecurityDeposit, data);
                     if (response.data.code === 400) {
-                        toast.error("Provide Mandatory fields - Commission Type, Store code,fromDate,toDate ");
-    
+                        toast.error("Provide Mandatory fields - security deposit Type, vendor code, Store code, fromDate,toDate ");
                     } else if (response.data.code === 201) {
-                        // console.log("RESPONSE DATA IS BELOW",response.data)
-                        if (response.data.data.length > 0) {
-                            const formattedData = response.data.data.map((item) => ({
-                                ...item,
-                                MRP: formatAmount(item.MRP),
-                                Discount: formatAmount(item.Discount),
-                                GST: formatAmount(item.GST),
-                                NSV: formatAmount(item.NSV),
-                                Comm_Amt: formatAmount(item.Comm_Amt),
-                                CARD_Charges: formatAmount(item.CARD_Charges),
-                                Tax_Base_Amt: formatAmount(item.Tax_Base_Amt),
-                                TDS_Amount: formatAmount(item.TDS_Amount),
-                                Net_Commission_Pay: formatAmount(item.Net_Commission_Pay),
-                                CGST_Amount: formatAmount(item.Tax_Base_Amt * 0.09),
-                                SGST_Amount: formatAmount(item.Tax_Base_Amt * 0.09),
-                                Invoice_Amount: formatAmount((item.Tax_Base_Amt * 0.09) + (item.Tax_Base_Amt * 0.09) + item.Tax_Base_Amt),
-                                displayMonth: getMonthYear(item.Month, item.Year),
-                                Sap_Store_Code: item.Sap_Store_Code.slice(-4),
-                                Vendor: item.Vendor.replace(/^0+/, ''),
-                            }));
-                            console.table("table is ", formattedData);
-                            setCommissionDetails(formattedData)
-    
-                        } else {
-                            setCommissionDetails([])
-                        }
-                    }
-                    else {
-                        setCommissionDetails([])
+                                if (response?.data?.BSIK_RETURN.length > 0) {
+                                    toast.success("this is working")
+                                    const formattedData = response.data.BSIK_RETURN.map((item) => ({
+                                        ...item,
+                                        LIFNR: formatAmount(item.LIFNR),
+                                        ZUONR: formatAmount(item.ZUONR),
+                                        BUDAT: formatAmount(item.BUDAT),
+                                        RFCCUR: formatAmount(item.RFCCUR),
+                                        NET_DUE_DATE: formatAmount(item.NET_DUE_DATE),
+                                        DMBTR: formatAmount(item.DMBTR),
+                                        BELNR: formatAmount(item.BELNR),
+                                        UMSKZ: formatAmount(item.UMSKZ),
+                                        // Net_Commission_Pay: formatAmount(item.Net_Commission_Pay),
+                                        // CGST_Amount: formatAmount(item.Tax_Base_Amt * 0.09),
+                                        // SGST_Amount: formatAmount(item.Tax_Base_Amt * 0.09),
+                                        // Invoice_Amount: formatAmount((item.Tax_Base_Amt * 0.09) + (item.Tax_Base_Amt * 0.09) + item.Tax_Base_Amt),
+                                        // displayMonth: getMonthYear(item.Month, item.Year),
+                                        // Sap_Store_Code: item.Sap_Store_Code.slice(-4),
+                                        // Vendor: item.Vendor.replace(/^0+/, ''),
+                                    }));
+                                    console.table("table is ", formattedData);
+                                    setSecurityDepositDetails(formattedData)
+                                } else { 
+                                    setSecurityDepositDetails([])
+                                }
+                    } else {
+                        setSecurityDepositDetails([])
                     }
                 }
             } catch (error) {
@@ -348,15 +349,15 @@ function SecurityDeposit() {
         const handleCsvBtnClick = () => {
             setTimeout(() => {
                 if (tableRef.current) {
-                    // Ensure commissionDetails has data
-                    if (commissionDetails.length === 0) {
+                    // Ensure securityDepositDetails has data
+                    if (securityDepositDetails.length === 0) {
                         console.log("No data to export");
                         toast.error("No data to export");
                         return;
                     }
     
                     // Extract unique months and sort in chronological order
-                    const months = [...new Set(commissionDetails.map(item => item.displayMonth))].sort((a, b) => {
+                    const months = [...new Set(securityDepositDetails.map(item => item.displayMonth))].sort((a, b) => {
                         const [monthA, yearA] = a.split('-');
                         const [monthB, yearB] = b.split('-');
                         const dateA = new Date(`${yearA}-${monthA}-01`);
@@ -364,14 +365,14 @@ function SecurityDeposit() {
                         return dateA - dateB; // Chronological order (oldest to latest)
                     });
                     const dynamicColumns = columns.filter(col =>
-                        commissionDetails.some(row => row[col.dataField] !== undefined && row[col.dataField] !== '')
+                        securityDepositDetails.some(row => row[col.dataField] !== undefined && row[col.dataField] !== '')
                     );
     
                     // Create a map of field values by month in the order of months
                     const fieldData = {};
                     dynamicColumns.forEach(col => {
                         fieldData[col.label] = months.map(month => {
-                            const row = commissionDetails.find(r => r.displayMonth === month);
+                            const row = securityDepositDetails.find(r => r.displayMonth === month);
                             let value = row ? row[col.dataField] || '' : '';
                             // Clean value: remove newlines, multiple spaces, and ensure consistent formatting
                             value = value.toString().replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -431,15 +432,15 @@ function SecurityDeposit() {
         const handlePdfBtnClick = () => {
             setTimeout(async () => {
                 if (tableRef.current) {
-                    // Ensure commissionDetails has data
-                    if (commissionDetails.length === 0) {
+                    // Ensure securityDepositDetails has data
+                    if (securityDepositDetails.length === 0) {
                         console.log("No data to export");
                         toast.error("No data to export");
                         return;
                     }
     
                     // Extract unique months and sort in chronological order
-                    const months = [...new Set(commissionDetails.map(item => item.displayMonth))].sort((a, b) => {
+                    const months = [...new Set(securityDepositDetails.map(item => item.displayMonth))].sort((a, b) => {
                         const [monthA, yearA] = a.split('-');
                         const [monthB, yearB] = b.split('-');
                         const dateA = new Date(`${yearA}-${monthA}-01`);
@@ -447,14 +448,14 @@ function SecurityDeposit() {
                         return dateA - dateB; // Chronological order (oldest to latest)
                     });
                     const dynamicColumns = columns.filter(col =>
-                        commissionDetails.some(row => row[col.dataField] !== undefined && row[col.dataField] !== '')
+                        securityDepositDetails.some(row => row[col.dataField] !== undefined && row[col.dataField] !== '')
                     );
     
                     // Create a map of field values by month
                     const fieldData = {};
                     dynamicColumns.forEach(col => {
                         fieldData[col.label] = months.map(month => {
-                            const row = commissionDetails.find(r => r.displayMonth === month);
+                            const row = securityDepositDetails.find(r => r.displayMonth === month);
                             return row ? row[col.dataField] || '' : '';
                         });
                     });
@@ -533,7 +534,7 @@ function SecurityDeposit() {
 
                                             <div className="col-md-4 mb-3">
                                                 <div className="form-group">
-                                                    <label htmlFor="location">Commission Type</label>
+                                                    <label htmlFor="location">Security Deposit Type</label>
                                                     <select name="selectedSecurityDeposit" id="country" className="form-select" value={selectedSecurityDeposit}
                                                         onChange={handleChange}>
                                                         {securityDepositType.map((option) => (
@@ -606,7 +607,7 @@ function SecurityDeposit() {
                         </div>
 
                         {
-                            commissionDetails.length > 0 ? (
+                            securityDepositDetails.length > 0 ? (
                                 <>
                                     {loading ? (
                                         <>
@@ -646,7 +647,7 @@ function SecurityDeposit() {
                                                                     id="table"
                                                                     appearance={appearance}
                                                                     dataExport={dataExport}
-                                                                    dataSource={commissionDetails}
+                                                                    dataSource={securityDepositDetails}
                                                                     paging={paging}
                                                                     pageIndex={pageIndex}
                                                                     pageSize={pageSize}
