@@ -193,7 +193,7 @@ function Support() {
         // const sasToken = process.env.REACT_APP_SAS_TOKEN;
         // const storageAccountName = process.env.REACT_APP_STORAGE_NAME;
         // const containerName = process.env.REACT_APP_CONTAINER_NAME;
-        const sasToken = '8AsWfol+VU1u4D6YMKRzPrJBwG1//up9Egka9e+qdimj53XpvfdWh4R+gHUm9RLWbZKryi+BMkHlPoYt3kd+Vw==';
+        const sasToken = 'UGDVG/LkxkKsqPwLY2wF0xroqo8GB34TrN8hKBrlo8GZf3fVs8ttTCH85Ck30krha6FCzgHdXT3p7J2rgMuBCQ==';
         const storageAccountName = 'abfrlsonatastorage';
         const containerName = 'pscdata';
 
@@ -262,7 +262,7 @@ function Support() {
 
 
                 // Prepare Payload
-                const payload = {
+                const payload = [{
                     QueryType: selectedQueryType,
                     VendorCode: VendorCode,
                     Name: selectedFranchiseName,
@@ -274,7 +274,7 @@ function Support() {
                     QueryComments: queryComments,
                     // Attachmentlink:'',
                     Attachmentlink: file ? blobUrl : ""
-                };
+                }];
 
                 // API request
                 const response = await axios.post(`${Azure_Upload_URL}/PscCaseCreation`, payload);
@@ -304,10 +304,10 @@ function Support() {
                         <div id="tabsSimple" className="col-xl-12 col-12 layout-spacing mt-3" >
                             <div className="statbox widget bg-white">
                                 {/* ================= (heading And Back Button Pill) ================== */}
-                                <div className="card m-4">
+                                <div className="card m-3">
                                     <div className="card-body">
                                         <div className="d-flex align-items-center justify-content-between">
-                                            <h3 className="p-1">Support</h3>
+                                            <h3 className="p-0">Support</h3>
                                             <div className="d-flex gap-2">
                                                 <Link to="/user/dashboard" className="btn btn-primary">
                                                     <i className="fa fa-arrow-left me-2"></i> Back

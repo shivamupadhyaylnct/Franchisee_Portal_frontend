@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import Table from 'smart-webcomponents-react/table';
@@ -10,37 +10,37 @@ import "primeicons/primeicons.css";
 
 import Swal from 'sweetalert2';
 import { apiPost, apiGet } from '../apiCommon';
-import { baseURL } from '../base';
 import { config } from '../config';
 import { Dialog, DialogActions, DialogContent, DialogTitle, } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { Grid2 as Grid } from '@mui/material';
-
-
+import * as Yup from "yup";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 
 
 function franchiseDetails() {
   const navigate = useNavigate();
   const [vendorCodes, setVendorCodes] = useState([])
   const [selectedVendorCode, setSelectedVendorCode] = useState([])
-  console.log("selectedVendorCodes:", selectedVendorCode);
+  // console.log("selectedVendorCodes:", selectedVendorCode);
   const [franchiseeName, setfranchiseeName] = useState([])
   const [selectedfranchiseeName, setSelectedfranchiseeName] = useState("")
   const [mapMobileNumber, setMapMobileNumber] = useState("")
   const [isMappingPopup, setIsMappingPopup] = useState(false)
   const [isAddUserPopup, setIsAddUserPopup] = useState(false)
+  const [isEditUserPopup, setIsEditUserPopup] = useState(false)
 
   const [franchiseeData, setFranchiseeData] = useState([]);
   const [addFranchiseeForm, setAddFranchiseeForm] = useState({
-    franchiseeName: "",
-    email: "",
-    mobileNumber: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-  });
+          franchiseeName: "",
+          email: "",
+          mobileNumber: "",
+          address: "",
+          city: "",
+          state: "",
+          pincode: "",
+        });
 
 
 
@@ -95,6 +95,31 @@ function franchiseDetails() {
     }
   };
 
+  const FranchiseSchema = Yup.object().shape({
+      franchiseeName: Yup.string()
+                     .required("Franchisee Name is required"),
+      email: Yup.string()
+            .email("Invalid email")
+            .required("Email is required")
+            .test("is-valid-domain", "Only Gmail or Outlook emails are allowed", (value) => {
+              if (!value) return false;
+              return value.endsWith(".com") || value.endsWith(".in");
+            }),
+      mobileNumber: Yup.string()
+                    .matches(/^[0-9]+$/, "Only digits allowed")
+                    .length(10, "Must be exactly 10 digits")
+                    .required("Mobile Number is required"),
+      address: Yup.string()
+              .required("Address is required"),
+      city: Yup.string()
+           .required("City is required"),
+      state: Yup.string()
+           .required("State is required"),
+      pincode: Yup.string()
+              .matches(/^[0-9]{6}$/, "Must be 6 digits only")
+              .required("Pincode is required"),
+});
+
 
   const handleMapSave = async () => {
     console.log("Selected Franchisee Name:", selectedfranchiseeName);
@@ -132,9 +157,11 @@ function franchiseDetails() {
         toast.success("Mapping saved successfully!");
 
         // Reset form fields after successful save
-        setSelectedfranchiseeName("");
+        // setSelectedfranchiseeName("");
         setSelectedVendorCode([]);
-        setMapMobileNumber("");
+        setIsMappingPopup(false);
+        // setMapMobileNumber("");
+
       } else {
         toast.error("Error: " + res.data.message);
       }
@@ -146,13 +173,13 @@ function franchiseDetails() {
 
   // =============================== ( Model form Data handles and Save Handle) ==================================
 
-  // form data input via name and value
-  const handleChange = (e) => {
-    setAddFranchiseeForm({
-      ...addFranchiseeForm,
-      [e.target.name]: e.target.value
-    });
-  };
+  // // form data input via name and value
+  // const handleChange = (e) => {
+  //   setAddFranchiseeForm({
+  //     ...addFranchiseeForm,
+  //     [e.target.name]: e.target.value
+  //   });
+  // };
 
 
 
@@ -315,7 +342,6 @@ function franchiseDetails() {
 
   const handleDelete = async (mobileNumber) => {
     // console.log("Mobile Number to delete =>", mobileNumber);
-
     if (!mobileNumber) {
       Swal.fire("Error", "Invalid mobile number.", "error");
       return;
@@ -347,9 +373,10 @@ function franchiseDetails() {
 
   const handleEdit = async (mobileNumber) => {
     try {
+      console.log("gdghdbd",mobileNumber);
       const response = await apiGet(config.adminGetFranchiseDetails, mobileNumber);
       const franchiseeDetails = response.data;
-      // console.log("Detail of that Franchisee is =>>", franchiseeDetails)
+      console.log("Detail of that Franchisee is =>>", franchiseeDetails)
       // Set form values
       setAddFranchiseeForm({
         franchiseeName: franchiseeDetails.franchiseeName || "",
@@ -365,6 +392,7 @@ function franchiseDetails() {
       // const modal = new bootstrap.Modal(document.getElementById("adduser"));
       // modal.show();
       setIsAddUserPopup(true)
+      // setIsEditUserPopup(true)
 
     } catch (error) {
       console.error("Failed to fetch Franchisee Details", error);
@@ -454,12 +482,24 @@ function franchiseDetails() {
 
   // ============================= (Downloading CSV ) ===============================================
 
+  const escapeCSVValue = (value) => {
+    if (value === null || value === undefined) return "";
+    const str = String(value);
+    // Escape quotes by doubling them
+    const escaped = str.replace(/"/g, '""');
+    // Wrap with quotes if contains comma, quote, or newline
+    if (/[",\n]/.test(escaped)) {
+      return `"${escaped}"`;
+    }
+    return escaped;
+  };
+
   const handleCsvBtnClick = () => {
     const exportColumns = columns.filter(col => !col.excludeFromExport); // Remove 'action' column from export
     const headers = exportColumns.map(col => col.label).join(',');        // Create CSV header
 
     const rows = franchiseeData.map(row =>                                     // Create CSV rows
-      exportColumns.map(col => row[col.dataField]).join(',')
+      exportColumns.map(col => escapeCSVValue(row[col.dataField])).join(',')
     );
 
     const csvContent = [headers, ...rows].join('\n');                     // Combine header and data
@@ -547,14 +587,12 @@ function franchiseDetails() {
 
 
       {/*======================== <!-- Modal Container for Add User --> =============================*/}
-      <div id="adduser" className="modal modal-lg animated zoomInUp custo-zoomInUp" role="dialog">
+      {/* <div id="adduser" className="modal modal-lg animated zoomInUp custo-zoomInUp" role="dialog">
         <div className="modal-dialog">
-          {/* <!-- Modal content--> */}
           <div className="modal-content" style={{ backgroundColor: 'white', color: 'black' }} >
             <div className="modal-header">
               <h5 className="modal-title">Add Franchise</h5>
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" >
-                {/* <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> */}
               </button>
             </div>
             <div className="modal-body">
@@ -622,9 +660,7 @@ function franchiseDetails() {
             </div>
           </div>
         </div>
-      </div>
-
-      {/*====================== Map User Model Container =========================== */}
+      </div> */}
 
       <Dialog
         open={isAddUserPopup}
@@ -652,7 +688,7 @@ function franchiseDetails() {
         >
           <CloseIcon />
         </IconButton>
-        <DialogContent
+        {/* <DialogContent
           sx={{
             width: { xs: '80vw', sm: '80vw', md: '55rem' },
             minHeight: '20rem',
@@ -709,12 +745,149 @@ function franchiseDetails() {
         <DialogActions>
           <button className="btn btn-light-dark" onClick={() => { setIsAddUserPopup(false), handleClose() }} >Cancel</button>
           <button type="button" onClick={handleSave} className="btn btn-primary">Save</button>
-        </DialogActions>
+        </DialogActions> */}
+        <Formik
+            initialValues={addFranchiseeForm}
+            validationSchema={FranchiseSchema}
+            onSubmit={(values) => {
+              // console.log("Form Data:", values);
+              handleSave(values); 
+              setIsAddUserPopup(false);
+            }}
+            validateOnChange={true}   // validate as user types
+            validateOnBlur={true}  
+            enableReinitialize={true}   //validate when input loses focus
+        >
+          {({ handleSubmit , isValid, dirty}) => (
+            <Form onSubmit={handleSubmit}>
+              <DialogContent
+                sx={{ 
+                  width: { xs: "80vw", sm: "80vw", md: "55rem" }, 
+                  minHeight: "20rem", 
+                }}>
+
+                <Grid container spacing={2}>
+                  {/* Franchise Name */}
+                  <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                    <div className="form-group">
+                      <label htmlFor="franchiseeName">Franchise Name</label>
+                      <Field
+                        type="text"
+                        name="franchiseeName"
+                        className="form-control mb-1"
+                        placeholder="Franchisee name"
+                      />
+                      <ErrorMessage name="franchiseeName" component="div" className="text-danger" />
+                    </div>
+                  </Grid>
+
+                  {/* Email */}
+                  <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                    <div className="form-group">
+                      <label htmlFor="email">Email</label>
+                      <Field
+                        type="text"
+                        name="email"
+                        className="form-control mb-1"
+                        placeholder="Email"
+                      />
+                      <ErrorMessage name="email" component="div" className="text-danger" /> </div>
+                  </Grid>
+
+                  {/* Mobile Number */}
+                  <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                    <div className="form-group">
+                      <label htmlFor="mobileNumber">Mobile Number</label>
+                      <Field
+                        type="text"
+                        name="mobileNumber"
+                        maxLength="10"
+                        className="form-control mb-1"
+                        placeholder="Mobile Number"
+                      />
+                      <ErrorMessage name="mobileNumber" component="div" className="text-danger" />
+                    </div>
+                  </Grid>
+
+                  {/* Address */}
+                  <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                    <div className="form-group">
+                      <label htmlFor="address">Address</label>
+                      <Field
+                        type="text"
+                        name="address"
+                        className="form-control mb-1"
+                        placeholder="Address"
+                      />
+                      <ErrorMessage name="address" component="div" className="text-danger" />
+                    </div>
+                  </Grid>
+
+                  {/* City */}
+                  <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                    <div className="form-group">
+                      <label htmlFor="city">City</label>
+                      <Field
+                        type="text"
+                        name="city"
+                        className="form-control mb-1"
+                        placeholder="City"
+                      />
+                      <ErrorMessage name="city" component="div" className="text-danger" />
+                    </div>
+                  </Grid>
+
+                  {/* State */}
+                  <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                    <div className="form-group">
+                      <label htmlFor="state">State</label>
+                      <Field
+                        type="text"
+                        name="state"
+                        className="form-control mb-1"
+                        placeholder="State"
+                      />
+                      <ErrorMessage name="state" component="div" className="text-danger" />
+                    </div>
+                  </Grid>
+
+                  {/* Pincode */}
+                  <Grid size={{ lg: 6, md: 6, xs: 12 }}>
+                    <div className="form-group">
+                      <label htmlFor="pincode">Pincode</label>
+                      <Field
+                        type="text"
+                        name="pincode"
+                        className="form-control mb-1"
+                        placeholder="Pincode"
+                      />
+                      <ErrorMessage name="pincode" component="div" className="text-danger" />
+                    </div>
+                  </Grid>
+                </Grid>
+              </DialogContent>
+
+              <DialogActions>
+                <button
+                  type="button" className="btn btn-light-dark"
+                  onClick={() => { setIsAddUserPopup(false); handleClose(); }}
+                  > Cancel </button>
+
+                <button 
+                   type="submit" 
+                   className="btn btn-primary"
+                   disabled={!(dirty && isValid)} // only enabled if form changed & valid
+                   > Save </button>
+              </DialogActions>
+            </Form>
+          )}
+        </Formik>
       </Dialog>
 
-      <div id="mapuser" className="modal modal-lg animated zoomInUp custo-zoomInUp" role="dialog">
+      {/*====================== Map User Model Container =========================== */}
+
+      {/* <div id="mapuser" className="modal modal-lg animated zoomInUp custo-zoomInUp" role="dialog">
         <div className="modal-dialog" >
-          {/* <!-- Modal content--> */}
           <div className="modal-content" style={{ backgroundColor: 'white', color: 'black' }} >
             <div className="modal-header">
               <h5 className="modal-title">Franchisee Vendor Mapping</h5>
@@ -728,8 +901,9 @@ function franchiseDetails() {
 
                   <div className="col-md-6">
                     <div className="form-group">
-                      <label htmlFor="franchiseeName">Franchise Name</label>
+                      <label htmlFor="franchiseeName" >Franchise Name</label>
                       <input
+                        style={{ backgroundColor: 'white', color: 'black' }}
                         type="text"
                         value={selectedfranchiseeName}
                         className="form-control"
@@ -754,33 +928,6 @@ function franchiseDetails() {
                   <div className="col-md-6">
                     <div className="form-group">
                       <label htmlFor="display">Vendor Code</label><br />
-                      {/* <select
-                        id="vendorCode"
-                        className="form-select"
-                        placeholder="Select Vendor Codes"
-                        value={selectedVendorCode}
-                        onChange={(e) => setSelectedVendorCode(e.target.value)}
-                      >
-                        <option value="" disabled>Select Vendor Codes</option>
-                        {vendorCodes.map((vendor) => (
-                          <option key={vendor.vendorUID} value={vendor.vendorCode}>
-                            {vendor.vendorCode}
-                          </option>
-                        ))}
-                      </select> */}
-                      {/* <MultiSelect
-                        id="vendorCode"
-                        value={selectedVendorCode || []}
-                        onChange={(e) => setSelectedVendorCode(e.value)}
-                        options={vendorCodes}
-                        optionLabel="vendorCode"
-                        optionValue="vendorCode"
-                        placeholder="Select Vendor Codes"
-                        filter
-                        maxSelectedLabels={3}
-                        className="w-full md:w-20rem"
-                      /> */}
-
                     </div>
                   </div>
                 </div>
@@ -792,7 +939,7 @@ function franchiseDetails() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <Dialog
         open={isMappingPopup}
@@ -806,7 +953,7 @@ function franchiseDetails() {
         <DialogTitle id="alert-dialog-title" > Franchisee Vendor Mapping </DialogTitle>
         <IconButton
           aria-label="close"
-          onClick={() => setIsMappingPopup(false)}
+          onClick={() => {setIsMappingPopup(false); setSelectedVendorCode([])}}
           sx={(theme) => ({
             position: 'absolute',
             right: 8,
@@ -822,6 +969,7 @@ function franchiseDetails() {
                 <div className="form-group">
                   <label htmlFor="franchiseeName">Franchise Name</label>
                   <input
+                    style={{ backgroundColor: 'white', color: 'black' }}
                     type="text"
                     value={selectedfranchiseeName}
                     className="form-control"
@@ -833,6 +981,7 @@ function franchiseDetails() {
                 <div className="form-group">
                   <label htmlFor="map-mobileNumber">Mobile Number</label>
                   <input
+                    style={{ backgroundColor: 'white', color: 'black' }}
                     type="text"
                     value={mapMobileNumber}
                     className="form-control"
@@ -858,6 +1007,7 @@ function franchiseDetails() {
                     ))}
                   </select> */}
                   <MultiSelect
+                    style={{ backgroundColor: 'white', color: 'black' }}
                     id="vendorCode"
                     value={selectedVendorCode || []}
                     onChange={(e) => setSelectedVendorCode(e.value)}
@@ -882,7 +1032,7 @@ function franchiseDetails() {
           <Button style={{ marginLeft: "10px" }} size="md" type="button" variant="inherit" onClick={() => setIsMappingPopup(false)}>
             Cancel
           </Button> */}
-          <button className="btn btn-light-dark" onClick={() => { setIsMappingPopup(false), handleClose() }}>Cancel</button>
+          <button className="btn btn-light-dark" onClick={() => { setIsMappingPopup(false); handleClose() ;setSelectedVendorCode([])}}>Cancel</button>
           <button type="button" onClick={handleMapSave} className="btn btn-primary">Save</button>
         </DialogActions>
       </Dialog>

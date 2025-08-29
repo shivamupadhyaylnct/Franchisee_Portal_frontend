@@ -6,9 +6,7 @@ import style5 from '../../src/assets/img/grid-blog-style-5.jpg';
 import style7 from '../../src/assets/img/grid-blog-style-7.jpg';
 import style8 from '../../src/assets/img/grid-blog-style-8.jpg';
 import { Link } from "react-router-dom";
-import axios from 'axios';
 import { apiPost } from '../apiCommon';
-import { baseURL } from '../base';
 import { config } from '../config';
 
 function Dashboard() {

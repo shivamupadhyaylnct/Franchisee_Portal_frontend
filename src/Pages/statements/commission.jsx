@@ -299,9 +299,14 @@ function Commission() {
                             Sap_Store_Code: item.Sap_Store_Code.slice(-4),
                             Vendor: item.Vendor.replace(/^0+/, ''),
                         }));
-                        console.table("table is ", formattedData);
-                        setCommissionDetails(formattedData)
+                        // console.table("table is ", formattedData);
+                        const sortedData = formattedData.sort((a, b) => {
+                            const dateA = new Date(`${a.Year}-${a.Month.padStart(2, '0')}-01`);
+                            const dateB = new Date(`${b.Year}-${b.Month.padStart(2, '0')}-01`);
+                            return dateA - dateB;
+                            });
 
+                        setCommissionDetails(sortedData);
                     } else {
                         setCommissionDetails([])
                     }

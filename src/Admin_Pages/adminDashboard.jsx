@@ -1,14 +1,11 @@
 import React from 'react'
 import style1 from '../../src/assets/img/grid-blog-style-9.jpg';
 import style2 from '../../src/assets/img/alert.jpg';
-import style3 from '../../src/assets/img/contact.jpg';
 import style4 from '../../src/assets/img/franchise.jpg';
 import style5 from '../../src/assets/img/CMR_NDC_Details.jpg'
 import style6 from '../../src/assets/img/grid-blog-style-8.jpg'
 import style7 from '../../src/assets/img/commission.jpg'
 import { Link } from 'react-router-dom';
-
-
 
 function adminDashboard() {
 
@@ -64,7 +61,7 @@ function adminDashboard() {
                                         </Link>
                                     </div>
 
-                                    <div className="col-lg-3 mb-3">
+                                    {/* <div className="col-lg-3 mb-3">
                                         <Link to="/admin/contact" className="card">
                                             <img src={style3} className="card-img-top" alt="..." />
                                             <div className="card-footer p-3">
@@ -81,7 +78,7 @@ function adminDashboard() {
                                                 </div>
                                             </div>
                                         </Link>
-                                    </div>
+                                    </div> */}
 
                                     <div className="col-lg-3 mb-3">
                                         <Link to="/admin/franchise" className="card">

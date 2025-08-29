@@ -83,6 +83,7 @@ function SecurityDeposit() {
             {
                 label: 'Vendor Code',
                 dataField: 'LIFNR',
+                dataType: 'string',
                 width: 100,
             },
             {
@@ -91,10 +92,22 @@ function SecurityDeposit() {
                 dataType: 'string',
                 width: 100,
             },
+             {
+                label: 'Security Deposit Type',
+                dataField: 'UMSKZ',
+                dataType: 'string',
+                width: 150,
+            },
             {
                 label: 'Posting Date',
                 dataField: 'BUDAT',
-                dataType: 'string',
+                dataType: 'date',
+                width: 150,
+            },
+            {
+                label: 'Net Due Date',
+                dataField: 'NET_DUE_DATE',
+                dataType: 'date',
                 width: 150,
             },
             {
@@ -104,26 +117,18 @@ function SecurityDeposit() {
                 width: 150,
             },
             {
-                label: 'Net Due Date',
-                dataField: 'NET_DUE_DATE',
-                dataType: 'number',
-                width: 150,
-            },
-            {
                 label: 'Amount',
                 dataField: 'DMBTR',
+                dataType: 'number',
                 width: 150,
             },
             {
                 label: 'Document No',
                 dataField: 'BELNR',
+                dataType: 'string',
                 width: 150,
             },
-            {
-                label: 'Security Deposit Type',
-                dataField: 'UMSKZ',
-                width: 150,
-            },
+           
             // {
             //     label: 'Net Sales Value (Rs.)',
             //     dataField: 'NSV',
@@ -288,17 +293,16 @@ function SecurityDeposit() {
                         toast.error("Provide Mandatory fields - security deposit Type, vendor code, Store code, fromDate,toDate ");
                     } else if (response.data.code === 201) {
                                 if (response?.data?.BSIK_RETURN.length > 0) {
-                                    toast.success("this is working")
                                     const formattedData = response.data.BSIK_RETURN.map((item) => ({
                                         ...item,
-                                        LIFNR: formatAmount(item.LIFNR),
-                                        ZUONR: formatAmount(item.ZUONR),
-                                        BUDAT: formatAmount(item.BUDAT),
-                                        RFCCUR: formatAmount(item.RFCCUR),
-                                        NET_DUE_DATE: formatAmount(item.NET_DUE_DATE),
-                                        DMBTR: formatAmount(item.DMBTR),
-                                        BELNR: formatAmount(item.BELNR),
-                                        UMSKZ: formatAmount(item.UMSKZ),
+                                        LIFNR: item.LIFNR,
+                                        ZUONR: item.ZUONR,
+                                        BUDAT: formatDate(item.BUDAT),
+                                        RFCCUR: item.RFCCUR,
+                                        NET_DUE_DATE: formatDate(item.NET_DUE_DATE),
+                                        DMBTR: parseFloat(item.DMBTR),
+                                        BELNR: item.BELNR,
+                                        UMSKZ: item.UMSKZ,
                                         // Net_Commission_Pay: formatAmount(item.Net_Commission_Pay),
                                         // CGST_Amount: formatAmount(item.Tax_Base_Amt * 0.09),
                                         // SGST_Amount: formatAmount(item.Tax_Base_Amt * 0.09),
@@ -333,17 +337,23 @@ function SecurityDeposit() {
                 return formatted // Now '2024-11'
             }
         };
-    
-        const formatAmount = (amount) => {
-            return new Intl.NumberFormat('en-IN', {
-                maximumFractionDigits: 0,
-            }).format(amount);
+
+        const formatDate = (yyyymmdd) => {
+            if (!yyyymmdd) return '';
+            if (typeof yyyymmdd !== "string") yyyymmdd = yyyymmdd.toString();
+            return `${yyyymmdd.slice(0, 4)}-${yyyymmdd.slice(4, 6)}-${yyyymmdd.slice(6, 8)}`;
         };
     
-        const getMonthYear = (month, year) => {
-            const date = new Date(`${year}-${month.padStart(2, '0')}-01`);
-            return date.toLocaleString('en-US', { month: 'short' }) + '-' + year;
-        };
+        // const formatAmount = (amount) => {
+        //     return new Intl.NumberFormat('en-IN', {
+        //         maximumFractionDigits: 0,
+        //     }).format(amount);
+        // };
+    
+        // const getMonthYear = (month, year) => {
+        //     const date = new Date(`${year}-${month.padStart(2, '0')}-01`);
+        //     return date.toLocaleString('en-US', { month: 'short' }) + '-' + year;
+        // };
     
         //====================== (Table Formation start ) =====================
         const handleCsvBtnClick = () => {
@@ -406,7 +416,7 @@ function SecurityDeposit() {
                     if (link.download !== undefined) {
                         const url = URL.createObjectURL(blob);
                         link.setAttribute('href', url);
-                        link.setAttribute('download', 'Vcommission.csv');
+                        link.setAttribute('download', 'MG_SecurityDeposit.csv');
                         link.style.visibility = 'hidden';
                         document.body.appendChild(link);
                         link.click();
@@ -468,9 +478,9 @@ function SecurityDeposit() {
                         content: [],
                         styles: {
                             header: {
-                                fontSize: 18,
+                                fontSize: 16,
                                 bold: true,
-                                margin: [40, 100, 0, 20] // Adjusted margin to start below logo (x: 40, y: 130+)
+                                margin: [5, 80, 0, 20] // Adjusted margin to start below logo (x: 5, y: 130+)
                             },
                             tableHeader: {
                                 bold: true,
@@ -478,7 +488,7 @@ function SecurityDeposit() {
                             }
                         },
                         pageSize: 'A4',
-                        pageOrientation: 'landscape',
+                        pageOrientation: 'portrate',
                         background: function (currentPage) {
                             return [
                                 {
@@ -493,10 +503,10 @@ function SecurityDeposit() {
                     // Split months into chunks of 6 in chronological order
                     for (let i = 0; i < months.length; i += 6) {
                         const chunkMonths = months.slice(i, i + 6);
-                        docDefinition.content.push({ text: 'Commission Statement', style: 'header' });
+                        docDefinition.content.push({ text: 'Security Deposit', style: 'header' });
                         docDefinition.content.push({
                             table: {
-                                headerRows: 1,
+                                headerRows: 0,
                                 widths: ['auto', ...chunkMonths.map(() => '*')],
                                 body: dynamicColumns.map(col => [
                                     { text: col.label, rotation: 0 },
@@ -511,7 +521,7 @@ function SecurityDeposit() {
                         }
                     }
     
-                    pdfMake.createPdf(docDefinition).download('Vcommission.pdf');
+                    pdfMake.createPdf(docDefinition).download('MG_SecurityDeposit.pdf');
                 } else {
                     console.log("Table ref not ready");
                     toast.error("Table ref not ready");

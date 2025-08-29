@@ -9,7 +9,7 @@ import AdminLayout from './Components/admin/adminLayout';
 import AdminDashboard from './Admin_Pages/adminDashboard';
 import AdminUser from './Admin_Pages/user';
 import AdminAlert from './Admin_Pages/alert';
-import AdminContact from './Admin_Pages/contact';
+// import AdminContact from './Admin_Pages/contact';
 import AdminFranchise from './Admin_Pages/franchiseDetails';
 import Profile from './Admin_Pages/adminProfile';
 import AdminCmrNdcDetails from './Admin_Pages/cmrNdcDetails';
@@ -56,7 +56,7 @@ function App() {
                      <Route path='/admin/dashboard' element={<AdminDashboard />} />
                      <Route path='/admin/user' element={<AdminUser />} />
                      <Route path='/admin/alert' element={<AdminAlert />} />
-                     <Route path='/admin/contact' element={<AdminContact />} />
+                     {/* <Route path='/admin/contact' element={<AdminContact />} /> */}
                      <Route path='/admin/franchise' element={<AdminFranchise />} />
                      <Route path='/admin/profile' element={< Profile />} />
                      <Route path='/admin/cmr_ndc_details' element={<AdminCmrNdcDetails />} />

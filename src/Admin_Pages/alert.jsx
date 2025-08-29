@@ -1,16 +1,9 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { apiPost, apiGet } from "../apiCommon";
-import { baseURL } from "../base";
 import { config } from "../config";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Grid2 as Grid } from "@mui/material";
@@ -19,11 +12,9 @@ import Swal from 'sweetalert2';
 
 function alert() {
   const navigate = useNavigate();
-  const [isAgreementExpirationPopup, setIsAgreementExpirationPopup] =
-    useState(false);
+  const [isAgreementExpirationPopup, setIsAgreementExpirationPopup] = useState(false);
   const [isStockBlockPopup, setIsStockBlockPopup] = useState(false);
-  const [isInvoiceSubmissionPopup, setIsInvoiceSubmissionPopup] =
-    useState(false);
+  const [isInvoiceSubmissionPopup, setIsInvoiceSubmissionPopup] = useState(false);
   const [isGenericFormPopup, setIsGenericFormPopup] = useState(false);
 
   const [agreementExpForm, setAgreementExpForm] = useState({
@@ -46,9 +37,20 @@ function alert() {
     isVisible: false,
   });
 
+
+  const resetAgreementForm = () => {
+    setAgreementExpForm({ alertMessage: "", remainingDays: "", });
+  };
+  const resetStockBlockForm = () => {
+    setAgreementExpForm({ alertMessage: ""});
+  };
+  const resetInvoiceForm = () => {
+    setAgreementExpForm({ alertMessage: "", expiryDate: "", });
+  };
+
+
   const handleAgreementChange = (e) => {
     const { name, value } = e.target;
-
     // remainingDays
         if (name === "remainingDays") {
           if (/^\d{0,3}$/.test(value)) {
@@ -297,151 +299,39 @@ function alert() {
                 <div className="d-flex align-items-center justify-content-between mb-3">
                   <h5>Alerts</h5>
                   <div className="d-flex gap-2">
-                    <a
-                      href="/admin/dashboard"
-                      className="btn btn-primary"
-                      onClick={(e) => handleNavClick(e, "/admin/dashboard")}
-                    >
+                    <a href="/admin/dashboard" className="btn btn-primary" onClick={(e) => handleNavClick(e, "/admin/dashboard")} >
                       <i className="fa fa-arrow-left me-2"></i> Back
                     </a>
                   </div>
                 </div>
                 <div className="p-5 d-flex justify-content-evenly gap-5">
-                  <button
-                    className="btn btn-warning p-4 fs-17"
-                    onClick={() => setIsAgreementExpirationPopup(true)}
-                  >
-                    Agreement Expiration Notification
-                  </button>
-                  <button
-                    className="btn btn-danger p-4 fs-17"
-                    onClick={() => setIsStockBlockPopup(true)}
-                  >
-                    Stock Block and Payment Hold Alerts
-                  </button>
-                  <button
-                    className="btn btn-secondary p-4 fs-17"
-                    onClick={() => setIsInvoiceSubmissionPopup(true)}
-                  >
-                    Invoice Submission Reminder
-                  </button>
-                  <button
-                    className="btn btn-success p-4 fs-17"
-                    onClick={() => setIsGenericFormPopup(true)}
-                  >
-                    Generic Message Alert
-                  </button>
+                  <button className="btn btn-warning p-4 fs-17" onClick={() => setIsAgreementExpirationPopup(true)} > Agreement Expiration Notification </button>
+                  <button className="btn btn-danger p-4 fs-17" onClick={() => setIsStockBlockPopup(true)} > Stock Block and Payment Hold Alerts </button>
+                  <button className="btn btn-secondary p-4 fs-17" onClick={() => setIsInvoiceSubmissionPopup(true)} > Invoice Submission Reminder </button>
+                  <button className="btn btn-success p-4 fs-17" onClick={() => setIsGenericFormPopup(true)} > Generic Message Alert </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* agreementexpiration */}
-        <div
-          id="agreementexpiration"
-          className="modal animated zoomInUp custo-zoomInUp"
-          role="dialog"
-        >
-          <div className="modal-dialog">
-            {/* <!-- Modal content--> */}
-            <div
-              className="modal-content"
-              style={{ backgroundColor: "white", color: "black" }}
-            >
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  Agreement Expiration Notification
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div className="form" id="stores1">
-                  <div className="row">
-                    <div className="col-md-12 mb-3">
-                      <div className="form-group">
-                        <label htmlFor="phone">Alert Message</label>
-                        <textarea
-                          id="textarea"
-                          className="form-control textarea"
-                          maxLength="400" // total 500
-                          rows="4"
-                          value={agreementExpForm.alertMessage}
-                          name="alertMessage"
-                          onChange={handleAgreementChange}
-                          placeholder="Agreement Expiration has not been submitted for [specific month]."
-                        ></textarea>
-                      </div>
-                    </div>
-                    <div className="col-md-12">
-                      <div className="form-group">
-                        <label htmlFor="phone">Remaining Days</label>
-                        <input
-                          type="number"
-                          className="form-control mb-3"
-                          id="profession"
-                          placeholder="days"
-                          onChange={handleAgreementChange}
-                          name="remainingDays"
-                          value={agreementExpForm.remainingDays}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer md-button">
-                <button className="btn btn-light-dark" data-bs-dismiss="modal">
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="btn btn-primary"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* agreementexpiration Popup */}
+
 
         <Dialog
-          open={isAgreementExpirationPopup}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          sx={{
-            ".MuiDialog-paper": {
-              maxWidth: "55rem !important",
-            },
-          }}
-        >
-          <DialogTitle id="alert-dialog-title">
-            Agreement Expiration Notification
-          </DialogTitle>
+            open={isAgreementExpirationPopup}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            sx={{ ".MuiDialog-paper": { maxWidth: "55rem !important", }, }} >
+          <DialogTitle id="alert-dialog-title"> Agreement Expiration Notification </DialogTitle>
           <IconButton
             aria-label="close"
-            onClick={() => setIsAgreementExpirationPopup(false)}
-            sx={(theme) => ({
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: theme.palette.grey[500],
-            })}
-          >
+            onClick={() => {setIsAgreementExpirationPopup(false); resetAgreementForm() }}
+            sx={(theme) => ({ position: "absolute", right: 8, top: 8, color: theme.palette.grey[500], })} >
             <CloseIcon />
           </IconButton>
           <DialogContent
-            sx={{
-              width: { xs: "60vw", sm: "60vw", md: "45rem" },
-              minHeight: "20rem",
-            }}
-          >
+            sx={{ width: { xs: "60vw", sm: "60vw", md: "45rem" }, minHeight: "20rem", }}>
             <>
               <Grid container spacing={2} justify="center">
                 <Grid size={{ lg: 12, md: 12, xs: 12 }}>
@@ -475,81 +365,19 @@ function alert() {
                 </Grid>
               </Grid>
             </>
+
           </DialogContent>
           <DialogActions>
-            <button
-              className="btn btn-light-dark"
-              onClick={() => setIsAgreementExpirationPopup(false)}
-            >
+            <button className="btn btn-light-dark" onClick={() => {setIsAgreementExpirationPopup(false);resetAgreementForm()}} >
               Cancel
             </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              className="btn btn-primary"
-            >
+            <button type="button" onClick={handleSave} className="btn btn-primary" >
               Save
             </button>
           </DialogActions>
         </Dialog>
 
         {/* stockblock */}
-        <div
-          id="stockblock"
-          className="modal animated zoomInUp custo-zoomInUp"
-          role="dialog"
-        >
-          <div className="modal-dialog">
-            {/* <!-- Modal content--> */}
-            <div
-              className="modal-content"
-              style={{ backgroundColor: "white", color: "black" }}
-            >
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  Stock Block and Payment Hold Alerts
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                >
-                  {/* <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> */}
-                </button>
-              </div>
-              <div className="modal-body">
-                <div className="form" id="stores1">
-                  <div className="row">
-                    <textarea
-                      id="textarea"
-                      className="form-control textarea"
-                      maxLength="400" // total 500
-                      rows="4"
-                      value={stockBlockForm.alertMessage}
-                      name="alertMessage"
-                      onChange={handleStockBlockChange}
-                      placeholder="Your GST is non-compliant. Stock and commission will be on hold until resolved for integrity or compliance issues"
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer md-button">
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="btn btn-primary"
-                >
-                  Save
-                </button>
-                <button className="btn btn-light-dark" data-bs-dismiss="modal">
-                  Cancel
-                </button>
-                {/* <!-- <button type="button" className="btn btn-primary">Save</button> --> */}
-              </div>
-            </div>
-          </div>
-        </div>
 
         <Dialog
           open={isStockBlockPopup}
@@ -566,21 +394,13 @@ function alert() {
           </DialogTitle>
           <IconButton
             aria-label="close"
-            onClick={() => setIsStockBlockPopup(false)}
-            sx={(theme) => ({
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: theme.palette.grey[500],
-            })}
+            onClick={() => {setIsStockBlockPopup(false);resetStockBlockForm()}}
+            sx={(theme) => ({ position: "absolute", right: 8, top: 8, color: theme.palette.grey[500], })}
           >
             <CloseIcon />
           </IconButton>
           <DialogContent
-            sx={{
-              width: { xs: "60vw", sm: "60vw", md: "45rem" },
-              minHeight: "15rem",
-            }}
+            sx={{ width: { xs: "60vw", sm: "60vw", md: "45rem" }, minHeight: "15rem", }}
           >
             <>
               <Grid container spacing={2} justify="center">
@@ -602,20 +422,10 @@ function alert() {
           <DialogActions>
             <button
               className="btn btn-light-dark"
-              onClick={() => {setIsStockBlockPopup(false);
-                setStockBlockForm({
-                  alertMessage: "",
-                  alertName: "Stock Block and Payment Hold Alerts",
-                })
-              }}
-            >
+              onClick={() => {setIsStockBlockPopup(false);resetStockBlockForm()}}>
               Cancel
             </button>
-            <button
-              type="button"
-              onClick={handleSave}
-              className="btn btn-primary"
-            >
+            <button type="button" onClick={handleSave} className="btn btn-primary" >
               Save
             </button>
           </DialogActions>
@@ -623,109 +433,24 @@ function alert() {
 
         {/* invoicesubmission */}
 
-        <div
-          id="invoicesubmission"
-          className="modal animated zoomInUp custo-zoomInUp"
-          role="dialog"
-        >
-          <div className="modal-dialog">
-            <div
-              className="modal-content"
-              style={{ backgroundColor: "white", color: "black" }}
-            >
-              <div className="modal-header">
-                <h5 className="modal-title">
-                  Invoice Submission Reminder (Advance release)
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div className="form" id="stores1">
-                  <div className="row">
-                    <div className="col-md-12 mb-3">
-                      <div className="form-group">
-                        <label htmlFor="phone">Alert Message</label>
-                        <textarea
-                          id="textarea"
-                          className="form-control textarea"
-                          maxLength="400" // total 500
-                          rows="4"
-                          value={invoiceForm.alertMessage}
-                          name="alertMessage"
-                          onChange={handleInvoiceChange}
-                          placeholder=" Invoice has not been submitted for [specific month]. Commission is on hold for any franchisee lacking submitted invoices"
-                        ></textarea>
-                      </div>
-                    </div>
-                    <div className="col-md-12">
-                      <div className="form-group">
-                        <label htmlFor="phone">Expiry Date</label>
-                        <input
-                          type="date"
-                          className="form-control mb-3"
-                          name="expiryDate"
-                          value={invoiceForm.expiryDate}
-                          onChange={handleInvoiceChange}
-                          id="profession"
-                          placeholder="expiryDate"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer md-button">
-                <button className="btn btn-light-dark" data-bs-dismiss="modal">
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSave}
-                  className="btn btn-primary"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <Dialog
           open={isInvoiceSubmissionPopup}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          sx={{
-            ".MuiDialog-paper": {
-              maxWidth: "55rem !important",
-            },
-          }}
+          sx={{ ".MuiDialog-paper": { maxWidth: "55rem !important", }, }}
         >
           <DialogTitle id="alert-dialog-title">
             Invoice Submission Reminder (Advance release)
           </DialogTitle>
           <IconButton
             aria-label="close"
-            onClick={() => setIsInvoiceSubmissionPopup(false)}
-            sx={(theme) => ({
-              position: "absolute",
-              right: 8,
-              top: 8,
-              color: theme.palette.grey[500],
-            })}
+            onClick={() => {setIsInvoiceSubmissionPopup(false);resetInvoiceForm()}}
+            sx={(theme) => ({ position: "absolute", right: 8, top: 8, color: theme.palette.grey[500], })}
           >
             <CloseIcon />
           </IconButton>
           <DialogContent
-            sx={{
-              width: { xs: "60vw", sm: "60vw", md: "45rem" },
-              minHeight: "20rem",
-            }}
-          >
+            sx={{ width: { xs: "60vw", sm: "60vw", md: "45rem" }, minHeight: "20rem", }} >
             <>
               <Grid container spacing={2} justify="center">
                 <Grid size={{ lg: 12, md: 12, xs: 12 }}>
@@ -762,13 +487,7 @@ function alert() {
           </DialogContent>
           <DialogActions>
             <button className="btn btn-light-dark"
-              onClick={() => {setIsInvoiceSubmissionPopup(false);
-                 setInvoiceForm({
-                  alertMessage: "",
-                  expiryDate: "",
-                  alertName: "Invoice Submission Reminder",
-                })
-              }} >
+              onClick={() => {setIsInvoiceSubmissionPopup(false);resetInvoiceForm}} >
               Cancel
             </button>
             <button type="button" onClick={handleSave} className="btn btn-primary" >
@@ -779,97 +498,58 @@ function alert() {
 
         {/* Generic Message Alert */}
 
-        {/* <div id="genericMessage" className="modal animated zoomInUp custo-zoomInUp" role="dialog">
-                    <div className="modal-dialog">
-                        <div className="modal-content" style={{ backgroundColor: 'white', color: 'black' }}>
-                            <div className="modal-header">
-                                <h5 className="modal-title">Invoice Submission Reminder (Advance release)</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                                <div className="form" id="stores1">
-                                    <div className="row">
+          <Dialog
+          open={isGenericFormPopup}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          sx={{ ".MuiDialog-paper": { maxWidth: "55rem !important" } }}
+          >
+          <DialogTitle id="alert-dialog-title"> {" "} Generic Message Alert{" "} </DialogTitle>
+          <IconButton
+              aria-label="close"
+              onClick={() => setIsGenericFormPopup(false)}
+              sx={(theme) => ({ position: "absolute", right: 8, top: 8, color: theme.palette.grey[500], })}
+              >
+              <CloseIcon />
+          </IconButton>
 
-                                        <div className="col-md-12 mb-3">
-                                            <div className="form-group">
-                                                <label htmlFor="phone">Alert Message</label>
-                                                <textarea
-                                                    id="textarea"
-                                                    className="form-control textarea"
-                                                    maxLength="400" // total 500
-                                                    rows="4"
-                                                    value={genericForm.alertMessage}
-                                                    name="alertMessage"
-                                                    onChange={handleGenericAlertChange}
-                                                    placeholder="">
-                                                </textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="modal-footer md-button">
-                                <button className="btn btn-light-dark" data-bs-dismiss="modal">Cancel</button>
-                                <button type="button" onClick={handleSave} className="btn btn-primary">Save</button>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
-
-                <Dialog
-                open={isGenericFormPopup}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-                sx={{ ".MuiDialog-paper": { maxWidth: "55rem !important" } }}
-                >
-                <DialogTitle id="alert-dialog-title"> {" "} Generic Message Alert{" "} </DialogTitle>
-                <IconButton
-                    aria-label="close"
-                    onClick={() => setIsGenericFormPopup(false)}
-                    sx={(theme) => ({ position: "absolute", right: 8, top: 8, color: theme.palette.grey[500], })}
-                    >
-                    <CloseIcon />
-                </IconButton>
-
-                <DialogContent
-                    sx={{ width: { xs: "60vw", sm: "60vw", md: "45rem" }, minHeight: "10rem", }}
-                >
-                    <>
-                    <Grid container spacing={2} justify="center">
-                        <Grid size={{ lg: 12, md: 12, xs: 12 }}>
-                        {/* <Grid item xs={12} md={12} lg={12}> */}
-                        <div className="form-group">
-                            <textarea
-                            id="textarea"
-                            className="form-control textarea"
-                            maxLength="400" // total 500
-                            rows="4"
-                            value={genericForm.alertMessage}
-                            name="alertMessage"
-                            onChange={handleGenericAlertChange}
-                            placeholder="Alert to display on Dashboard"
-                            ></textarea>
-                        </div>
-                        </Grid>
-                    </Grid>
-                    </>
-                </DialogContent>
-                <DialogActions>
-                    <FormControlLabel
-                    control={
-                        <Switch
-                        checked={genericForm.isVisible}
-                        onChange={handleToggle}
-                        name="isVisible"
-                        color="primary"
-                        disabled={!genericForm.alertMessage} // disable toggle if someone type
-                        />
-                    }
-                    label="Show on Dashboard"
-                    />
-                </DialogActions>
-                </Dialog>
+          <DialogContent
+              sx={{ width: { xs: "60vw", sm: "60vw", md: "45rem" }, minHeight: "10rem", }}
+          >
+              <>
+              <Grid container spacing={2} justify="center">
+                  <Grid size={{ lg: 12, md: 12, xs: 12 }}>
+                  <div className="form-group">
+                      <textarea
+                      id="textarea"
+                      className="form-control textarea"
+                      maxLength="400" // total 500
+                      rows="4"
+                      value={genericForm.alertMessage}
+                      name="alertMessage"
+                      onChange={handleGenericAlertChange}
+                      placeholder="Alert to display on Dashboard"
+                      ></textarea>
+                  </div>
+                  </Grid>
+              </Grid>
+              </>
+          </DialogContent>
+          <DialogActions>
+              <FormControlLabel
+              control={
+                  <Switch
+                  checked={genericForm.isVisible}
+                  onChange={handleToggle}
+                  name="isVisible"
+                  color="primary"
+                  disabled={!genericForm.alertMessage} // disable toggle if someone type
+                  />
+              }
+              label="Show on Dashboard"
+              />
+          </DialogActions>
+          </Dialog>
       </div>
       {/* <!--  END CONTENT AREA  --> */}
     </>
